@@ -39,52 +39,54 @@ public final class App implements Runnable {
      * @param args Command line arguments.
      */
     public static void main(final String[] args) {
-        final Path watchedPath = args.length == 0 ? null : Path.of(args[0]).toAbsolutePath().normalize();
-        final Path outputPath = args.length == 0 ? null : Path.of(args[1]).toAbsolutePath().normalize();
+        final Path watchedPath = args.length == 0 ? null : Path.of(args[0]).normalize();
+        final Path outputPath = args.length == 0 ? null : Path.of(args[1]).normalize();
         verifyParameters(watchedPath, outputPath);
+        GConsole.println(GStrings.format("Use %s to exit.", GConsole.coloredText("Ctrl + C", GConsole.COLOR_BRIGHT_WHITE)));
         final App app = new App(watchedPath, outputPath);
         app.run();
     }
 
     private static void verifyParameters(final Path watchedPath, final Path outputPath) {
-        final String coloredWatched = GConsole.coloredText("dir_to_watch", GConsole.COLOR_BRIGHT_WHITE);
-        final String coloredOutput = GConsole.coloredText("output_file", GConsole.COLOR_BRIGHT_WHITE);
+        final String cWatched = GConsole.coloredText("WATCHED_DIR", GConsole.COLOR_BRIGHT_WHITE);
+        final String cOutput = GConsole.coloredText("OUTPUT_DIR", GConsole.COLOR_BRIGHT_WHITE);
+        final String cPlayer = GConsole.coloredText("Player.java", GConsole.COLOR_BRIGHT_CYAN);
         if ((watchedPath == null) || (outputPath == null)) {
-            GConsole.println("Needs two args: %s and %s.", coloredWatched, coloredOutput);
+            GConsole.println("gcc %s %s", cWatched, cOutput);
+            GConsole.println("  %s: Directory with changing source Java files.", cWatched);
+            GConsole.println("   %s: Directory to store %s.", cOutput, cPlayer);
             GConsole.flush();
             System.exit(1);
         }
         if (!Files.isDirectory(watchedPath)) {
-            GConsole.println("%s doesn't exist.", coloredWatched);
+            GConsole.println("%s doesn't exist.", cWatched);
             GConsole.flush();
             System.exit(1);
         }
         if (!Files.isReadable(watchedPath)) {
-            GConsole.println("Can't read %s.", coloredWatched);
+            GConsole.println("Can't read from %s.", cWatched);
             GConsole.flush();
             System.exit(1);
         }
-        if (!Files.isDirectory(outputPath.getParent())) {
-            GConsole.println("Parent dir of %s doesn't exist.", coloredOutput);
+        if (!Files.isRegularFile(watchedPath.resolve(Coalescer.PLAYER_JAVA))) {
+            GConsole.println("%s doesn't exist in %s.", cPlayer, cWatched);
             GConsole.flush();
             System.exit(1);
         }
-        if (!Files.isWritable(outputPath.getParent())) {
-            GConsole.println("Can't write to parent dir of %s.", coloredOutput);
+        if (outputPath.equals(watchedPath)) {
+            GConsole.println("%s can't be the same as %s.", cOutput, cWatched);
             GConsole.flush();
             System.exit(1);
         }
-        if (Files.exists(outputPath)) {
-            if (!Files.isRegularFile(outputPath)) {
-                GConsole.println("%s is not a file.", coloredOutput);
-                GConsole.flush();
-                System.exit(1);
-            }
-            if (!Files.isWritable(outputPath)) {
-                GConsole.println("Can't write to %s.", coloredOutput);
-                GConsole.flush();
-                System.exit(1);
-            }
+        if (!Files.isDirectory(outputPath)) {
+            GConsole.println("%s doesn't exist.", cOutput);
+            GConsole.flush();
+            System.exit(1);
+        }
+        if (!Files.isWritable(outputPath)) {
+            GConsole.println("Can't write to %s.", cOutput);
+            GConsole.flush();
+            System.exit(1);
         }
     }
 
