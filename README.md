@@ -6,7 +6,16 @@ a normal app would, when participating in
 [CodinGame](https://www.codingame.com/) challenges or
 competitions.
 
-You run the tool like this:
+---
+#### Run it!
+
+You need at least Java 15.
+
+If you download the release, you can simply run it like this:
+
+    java -jar gcc.jar WATCHED_DIR OUTPUT_DIR
+
+If you clone the repo:
 
     ./run WATCHED_DIR OUTPUT_DIR
 
@@ -19,6 +28,7 @@ will be written. This is the file you want to link in the
 Note that `./run` will also compile the 1st time. So don't worry
 about anything else, if all you want to do is use it.
 
+---
 #### What does it do?
 
 It constantly observes WATCHED_DIR for changes, and it
