@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# Copyright 2020 Luis Mejia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Run app!
+
+# Capture arguments.
+args=$*
+
+# Build distribution and gather properties.
+# We do it in one pass for speed.
+gradleProperties=$(./gradlew build properties)
+if test $? -ne 0; then
+  echo "Build failed!"
+  exit 2
+fi
+
+# Get Gradle properties.
+# We did this already for speed. Read above.
+#gradleProperties=$(./gradlew properties)
+
+# Get distribution directory.
+distDir=$(echo "$gradleProperties" | sed -n 's/^distsDir: \(.*\)/\1/p')
+if test -z distDir; then
+  echo "Distribution directory not found!"
+  exit 2
+fi
+
+# Get application name.
+appName=$(echo "$gradleProperties" | sed -n 's/^applicationName: \(.*\)/\1/p')
+if test -z appName; then
+  echo "Application name not found!"
+  exit 2
+fi
+
+# Get tar path.
+tarPath=""
+for filename in "$distDir"/*.tar; do
+  if test ! -f "$filename"; then
+    continue
+  fi
+  if test ! -z "$tarPath"; then
+    echo "More than one distribution found!"
+    exit 2
+  fi
+  tarPath="$filename"
+done
+if test -z "$tarPath"; then
+  echo "No distribution found!"
+  exit 2
+fi
+
+# Get work dir.
+workDir="${tarPath%.tar}"
+
+# Remove work directory, if it exists.
+if test -d "$workDir"; then
+  rm -dr "$workDir"
+  if test $? -ne 0; then
+    echo "Can't remove '$workDir'!"
+    exit 2
+  fi
+fi
+
+# Extract distribution into work dir.
+tar -xf "$tarPath" -C "$distDir"
+if test $? -gt 0; then
+  echo "Tar expansion failed!"
+  exit 2
+fi
+
+# Run app.
+"$workDir"/bin/"$appName" $args
