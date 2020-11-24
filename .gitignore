@@ -5,6 +5,3 @@
 # Gradle.
 .gradle/
 build/
-
-# Gradle plugin generated.
-build-info.json
