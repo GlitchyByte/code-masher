@@ -139,6 +139,9 @@ public final class Coalescer implements Runnable {
         try (final Writer writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)) {
             writeImports(writer, javaClasses);
             final JavaClass player = javaClasses.stream().filter(jc -> jc.name.equals(PLAYER_JAVA)).findFirst().orElse(null);
+            if (player == null) {
+                throw new IllegalStateException("No Player.java found, but this should never happen!");
+            }
             javaClasses.remove(player);
             writeMainClass(writer, player, javaClasses);
         }
