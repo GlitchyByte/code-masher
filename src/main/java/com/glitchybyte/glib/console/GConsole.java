@@ -1,22 +1,9 @@
-/*
- * Copyright 2020 Luis Mejia
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2020 GlitchyByte
+// SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.lib.console;
+package com.glitchybyte.glib.console;
 
-import com.glitchybyte.lib.GStrings;
+import com.glitchybyte.glib.GStrings;
 
 import java.io.Console;
 import java.io.PrintWriter;
@@ -182,11 +169,6 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorUp(final int n) {
-        if (n == 0) {
-            return "";
-        } else if (n < 0) {
-            return cursorDown(-n);
-        }
         return GStrings.format(CSI_CURSOR_UP, n);
     }
 
@@ -197,11 +179,6 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorDown(final int n) {
-        if (n == 0) {
-            return "";
-        } else if (n < 0) {
-            return cursorUp(-n);
-        }
         return GStrings.format(CSI_CURSOR_DOWN, n);
     }
 
