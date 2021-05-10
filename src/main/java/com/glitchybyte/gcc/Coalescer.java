@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class Coalescer implements Runnable {
@@ -25,9 +25,21 @@ public final class Coalescer implements Runnable {
     public static final String PLAYER_JAVA = "Player.java";
 
     /**
+     * Magic comment to be replaced by a timestamp.
+     */
+    private static final String MAGIC_COMMENT_TIMESTAMP = "[[GCC::TIMESTAMP]]";
+
+    /**
      * Magic comment to be replaced by all other Java classes.
      */
-    private static final String MAGIC_COMMENT = "[[GCC::CODE]]";
+    private static final String MAGIC_COMMENT_CODE = "[[GCC::CODE]]";
+
+    /**
+     * Timestamp formatter.
+     */
+    private static final DateTimeFormatter timestampFormatter =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd|HH:mm:ss.SSS", Locale.US)
+                    .withZone(ZoneOffset.systemDefault());
 
     private final Path watchedPath;
     private final Path outputPath;
@@ -148,7 +160,10 @@ public final class Coalescer implements Runnable {
 
     private void writeMainClass(final Writer writer, final JavaClass player, final List<JavaClass> others) throws IOException {
         for (final String line: player.getContents()) {
-            if (line.contains(MAGIC_COMMENT)) {
+            if (line.contains(MAGIC_COMMENT_TIMESTAMP)) {
+                writer.write("    // " + getTimestamp() + GStrings.NEW_LINE);
+                continue;
+            } else if (line.contains(MAGIC_COMMENT_CODE)) {
                 for (final JavaClass javaClass: others) {
                     writeOtherClass(writer, javaClass);
                     writer.write(GStrings.NEW_LINE);
@@ -169,5 +184,9 @@ public final class Coalescer implements Runnable {
             }
             writer.write("    " + line + GStrings.NEW_LINE);
         }
+    }
+
+    private String getTimestamp() {
+        return timestampFormatter.format(Instant.now());
     }
 }

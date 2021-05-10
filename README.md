@@ -41,7 +41,8 @@ Example minimal *Player.java*:
 
 ```java
 class Player implements Runnable {
-
+    // [[GCC::TIMESTAMP]]
+    
     public static void main(final String[] args) {
         final Player player = new Player();
         player.run();
@@ -56,8 +57,13 @@ class Player implements Runnable {
 }
 ```
 
-Note the comment with `[[GCC::CODE]]` in it. **This is a magic
-tag, and it must exist!** That is the point where all your other
+Note the two GCC comments:
+
+* `[[GCC::TIMESTAMP]]` Gets replaced by the time at the moment of
+coalescing.
+
+* `[[GCC::CODE]]` **This is must exist!** This is the point where all your other
 classes are injected. Your classes will automatically be made
 `static`, and all imports will be correctly added, with no
 duplicates, to the top of the generated file.
+
