@@ -1,8 +1,3 @@
-tasks.named<Wrapper>("wrapper") {
-    // Automatically set distribution type all when updating gradlew.
-    distributionType = Wrapper.DistributionType.ALL
-}
-
 plugins {
     application
 }
@@ -13,8 +8,8 @@ repositories {
 
 java {
     // Java version for the app.
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 }
 
 tasks.named("test", Test::class) {
@@ -34,7 +29,7 @@ dependencies {
 
 // Setup build info.
 group = "com.glitchybyte"
-version = "1.0.0"
+version = "1.1.0"
 val mainPackage = "$group.gcc"
 
 application {
