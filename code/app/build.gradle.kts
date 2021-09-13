@@ -7,30 +7,28 @@ repositories {
 }
 
 java {
-    // Java version for the app.
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
-}
-
-tasks.named("test", Test::class) {
-    // Use JUnit 5 (Jupiter) with 8 parallel test execution and full logging.
-    useJUnitPlatform()
-    maxParallelForks = 8
-    testLogging.exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(16))
+    }
 }
 
 dependencies {
     // Main dependencies.
     // -- None.
     // Test dependencies.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
+}
+
+tasks.test {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+    maxParallelForks = 8
 }
 
 // Setup build info.
 group = "com.glitchybyte"
-version = "1.1.0"
-val mainPackage = "$group.gcc"
+version = "1.2.0"
+val mainPackage = "$group.gbcc"
 
 application {
     // Set app entry point.
@@ -42,12 +40,9 @@ tasks.named("build") {
     finalizedBy("uberJar")
 }
 
-tasks.withType<Jar> {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
 // Register uber jar task.
 tasks.register("uberJar", Jar::class) {
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     group = "Build"
     description = "Assembles a jar archive containing everything."
     archiveClassifier.set("uber")
@@ -58,7 +53,7 @@ tasks.register("uberJar", Jar::class) {
     dependsOn(configurations.runtimeClasspath)
     from({
         configurations.runtimeClasspath.get()
-                .filter { it.name.endsWith("jar") }
-                .map { zipTree(it) }
+            .filter { it.name.endsWith("jar") }
+            .map { zipTree(it) }
     })
 }

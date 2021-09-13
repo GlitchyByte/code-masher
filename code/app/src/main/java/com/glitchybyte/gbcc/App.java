@@ -1,7 +1,7 @@
 // Copyright 2020 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.gcc;
+package com.glitchybyte.gbcc;
 
 import com.glitchybyte.glib.GStrings;
 import com.glitchybyte.glib.GSystem;
@@ -39,7 +39,7 @@ public final class App implements Runnable {
         final String cOutput = GConsole.coloredText("OUTPUT_DIR", GConsole.COLOR_BRIGHT_WHITE);
         final String cPlayer = GConsole.coloredText("Player.java", GConsole.COLOR_BRIGHT_CYAN);
         if ((watchedPath == null) || (outputPath == null)) {
-            GConsole.println("gcc %s %s", cWatched, cOutput);
+            GConsole.println("gbcc %s %s", cWatched, cOutput);
             GConsole.println("  %s: Directory with changing source Java files.", cWatched);
             GConsole.println("   %s: Directory to store %s.", cOutput, cPlayer);
             GConsole.flush();

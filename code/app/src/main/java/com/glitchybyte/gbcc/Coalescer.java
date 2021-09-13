@@ -1,7 +1,7 @@
 // Copyright 2020 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.gcc;
+package com.glitchybyte.gbcc;
 
 import com.glitchybyte.glib.GStrings;
 import com.glitchybyte.glib.console.GConsole;
