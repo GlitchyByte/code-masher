@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Glitchy CodinGame Coalescer.
+ * GlitchyByte CodinGame Coalescer.
  * <p>
  * Coalesces a group of Java files into a single file usable on CodinGame.
  */
