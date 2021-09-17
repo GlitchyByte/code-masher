@@ -4,55 +4,71 @@
 
 # Run app!
 
+# Capture project to run.
+project=$1
+if test -z "$project"; then
+  echo "Usage: ./run PROJECT [arg1 arg2 ...]"
+  exit 1
+fi
+
 # Capture arguments.
+shift
 args=$*
+
+# Go to code directory.
+cd code || exit 1
 
 # Build distribution and gather properties.
 # We do it in one pass for speed.
-gradleProperties=$(./gradlew build properties)
+gradleProperties=$(./gradlew "$project":build "$project":properties)
+./gradlew "$project":build
 if test $? -ne 0; then
   echo "Build failed!"
-  exit 2
+  cd ..
+  exit 1
 fi
 
 # Get Gradle properties.
 # We did this already for speed. Read above.
-#gradleProperties=$(./gradlew properties)
+# gradleProperties=$(./gradlew "$project":properties)
+
+# Go back to caller directory.
+cd .. || exit 1
 
 # Get build directory.
 buildDir=$(echo "$gradleProperties" | sed -n 's/^buildDir: \(.*\)/\1/p')
-if test -z buildDir; then
+if test -z "$buildDir"; then
   echo "Build directory not found!"
-  exit 2
+  exit 1
 fi
 
 # Get distribution directory.
 distsDirName=$(echo "$gradleProperties" | sed -n 's/^distsDirName: \(.*\)/\1/p')
-if test -z distsDirName; then
+if test -z "$distsDirName"; then
   echo "Distribution directory not found!"
-  exit 2
+  exit 1
 fi
 distDir="$buildDir/$distsDirName"
 
 # Get application name.
 appName=$(echo "$gradleProperties" | sed -n 's/^applicationName: \(.*\)/\1/p')
-if test -z appName; then
+if test -z "$appName"; then
   echo "Application name not found!"
-  exit 2
+  exit 1
 fi
 
 # Get version.
 version=$(echo "$gradleProperties" | sed -n 's/^version: \(.*\)/\1/p')
-if test -z version; then
+if test -z "$version"; then
   echo "Version not found!"
-  exit 2
+  exit 1
 fi
 
 # Get tar path.
 tarPath="$distDir/$appName-$version.tar"
 if test -z "$tarPath"; then
   echo "No distribution found!"
-  exit 2
+  exit 1
 fi
 
 # Get work dir.
@@ -63,7 +79,7 @@ if test -d "$workDir"; then
   rm -dr "$workDir"
   if test $? -ne 0; then
     echo "Can't remove '$workDir'!"
-    exit 2
+    exit 1
   fi
 fi
 
@@ -71,7 +87,7 @@ fi
 tar -xf "$tarPath" -C "$distDir"
 if test $? -gt 0; then
   echo "Tar expansion failed!"
-  exit 2
+  exit 1
 fi
 
 # Run app.
