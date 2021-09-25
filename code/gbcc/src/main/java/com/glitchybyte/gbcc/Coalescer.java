@@ -1,4 +1,4 @@
-// Copyright 2020 GlitchyByte
+// Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gbcc;
@@ -27,12 +27,12 @@ public final class Coalescer implements Runnable {
     /**
      * Magic comment to be replaced by a timestamp.
      */
-    private static final String MAGIC_COMMENT_TIMESTAMP = "[[GCC::TIMESTAMP]]";
+    private static final String MAGIC_COMMENT_UPDATESTAMP = "[[GBCC::UPDATESTAMP]]";
 
     /**
      * Magic comment to be replaced by all other Java classes.
      */
-    private static final String MAGIC_COMMENT_CODE = "[[GCC::CODE]]";
+    private static final String MAGIC_COMMENT_CODE = "[[GBCC::CODE]]";
 
     /**
      * Timestamp formatter.
@@ -160,8 +160,12 @@ public final class Coalescer implements Runnable {
 
     private void writeMainClass(final Writer writer, final JavaClass player, final List<JavaClass> others) throws IOException {
         for (final String line: player.getContents()) {
-            if (line.contains(MAGIC_COMMENT_TIMESTAMP)) {
+            if (line.contains(MAGIC_COMMENT_UPDATESTAMP)) {
                 writer.write("    // " + getTimestamp() + GStrings.NEW_LINE);
+                final String[] graphic = new Graphic(40, 5, 10).toStringArray();
+                for (final String graphicLine: graphic) {
+                    writer.write("    // " + graphicLine + GStrings.NEW_LINE);
+                }
                 continue;
             } else if (line.contains(MAGIC_COMMENT_CODE)) {
                 for (final JavaClass javaClass: others) {

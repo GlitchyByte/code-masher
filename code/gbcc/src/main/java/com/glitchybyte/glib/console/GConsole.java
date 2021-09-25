@@ -1,4 +1,4 @@
-// Copyright 2020 GlitchyByte
+// Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.console;
