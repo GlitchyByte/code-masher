@@ -1,5 +1,6 @@
 plugins {
     application
+    id("org.graalvm.buildtools.native") version "0.9.5"
 }
 
 repositories {
@@ -34,26 +35,3 @@ application {
     // Set app entry point.
     mainClass.set("$mainPackage.App")
 }
-
-//// Create uber jar at the end of build, after tests.
-//tasks.named("build") {
-//    finalizedBy("uberJar")
-//}
-//
-//// Register uber jar task.
-//tasks.register("uberJar", Jar::class) {
-////    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//    group = "Build"
-//    description = "Assembles a jar archive containing everything."
-//    archiveClassifier.set("uber")
-//    manifest {
-//        attributes["Main-Class"] = application.mainClass.get()
-//    }
-//    from(sourceSets.main.get().output)
-//    dependsOn(configurations.runtimeClasspath)
-//    from({
-//        configurations.runtimeClasspath.get()
-//            .filter { it.name.endsWith("jar") }
-//            .map { zipTree(it) }
-//    })
-//}
