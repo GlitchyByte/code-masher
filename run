@@ -4,6 +4,10 @@
 
 # Run app!
 
+# Capture caller directory and script directory.
+callingDir="$(pwd)"
+scriptDir="$(cd $(dirname "$0") && pwd)"
+
 # Capture project to run.
 project=$1
 if test -z "$project"; then
@@ -24,7 +28,7 @@ gradleProperties=$(./gradlew "$project":build "$project":properties)
 ./gradlew "$project":build
 if test $? -ne 0; then
   echo "Build failed!"
-  cd ..
+  cd "$callingDir"
   exit 1
 fi
 
@@ -33,7 +37,7 @@ fi
 # gradleProperties=$(./gradlew "$project":properties)
 
 # Go back to caller directory.
-cd .. || exit 1
+cd "$callingDir" || exit 1
 
 # Get build directory.
 buildDir=$(echo "$gradleProperties" | sed -n 's/^buildDir: \(.*\)/\1/p')
