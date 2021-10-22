@@ -33,6 +33,9 @@ public final class GConsole {
      */
     private static final String CSI = "\u001b[";
 //    private static final String CSI_CLEAR = CSI + "2J";
+    private static final String CSI_CLEAR_CURRENT_LINE = CSI + "K";
+    private static final String CSI_CLEAR_TO_END_OF_LINE = CSI + "0K";
+    private static final String CSI_CLEAR_TO_START_OF_LINE = CSI + "1K";
 //    private static final String CSI_MOVE_TO = CSI + "%d;%df";
     private static final String CSI_CURSOR_UP = CSI + "%dA";
     private static final String CSI_CURSOR_DOWN = CSI + "%dB";
@@ -158,6 +161,18 @@ public final class GConsole {
 //        return CSI_CLEAR;
 //    }
 
+    public static String clearCurrentLine() {
+        return CSI_CLEAR_CURRENT_LINE;
+    }
+
+    public static String clearToEndOfLine() {
+        return CSI_CLEAR_TO_END_OF_LINE;
+    }
+
+    public static String clearToStartOfLine() {
+        return CSI_CLEAR_TO_START_OF_LINE;
+    }
+
 //    public static void moveTo(final int x, final int y) {
 //        return GStrings.format(CSI_MOVE_TO, y + 1, x + 1);
 //    }
@@ -169,7 +184,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorUp(final int n) {
-        return n == 0 ? "" : GStrings.format(CSI_CURSOR_UP, n);
+        return n == 0? "" : GStrings.format(CSI_CURSOR_UP, n);
     }
 
     /**
@@ -179,7 +194,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorDown(final int n) {
-        return n == 0 ? "" : GStrings.format(CSI_CURSOR_DOWN, n);
+        return n == 0? "" : GStrings.format(CSI_CURSOR_DOWN, n);
     }
 
     /**
@@ -189,7 +204,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorLeft(final int n) {
-        return n == 0 ? "" : GStrings.format(CSI_CURSOR_BACK, n);
+        return n == 0? "" : GStrings.format(CSI_CURSOR_BACK, n);
     }
 
     /**
@@ -199,7 +214,7 @@ public final class GConsole {
      * @return {@code String} with encoded command.
      */
     public static String cursorRight(final int n) {
-        return n == 0 ? "" : GStrings.format(CSI_CURSOR_FORWARD, n);
+        return n == 0? "" : GStrings.format(CSI_CURSOR_FORWARD, n);
     }
 
     /**

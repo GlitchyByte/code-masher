@@ -1,2 +1,2 @@
 rootProject.name = "codingame-coalescer"
-include("gbcc")
+include("glib", "gbcc")
