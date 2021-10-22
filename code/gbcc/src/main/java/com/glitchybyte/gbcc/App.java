@@ -1,4 +1,4 @@
-// Copyright 2020 GlitchyByte
+// Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gbcc;
@@ -36,15 +36,16 @@ public final class App implements Runnable {
 
     private static void verifyParameters(final Path watchedPath, final Path outputPath) {
         final String cWatched = GConsole.coloredText("WATCHED_DIR", GConsole.COLOR_BRIGHT_WHITE);
-        final String cOutput = GConsole.coloredText("OUTPUT_DIR", GConsole.COLOR_BRIGHT_WHITE);
-        final String cPlayer = GConsole.coloredText("Player.java", GConsole.COLOR_BRIGHT_CYAN);
+        final String cOutput = GConsole.coloredText("OUTPUT_FILE", GConsole.COLOR_BRIGHT_WHITE);
         if ((watchedPath == null) || (outputPath == null)) {
             GConsole.println("gbcc %s %s", cWatched, cOutput);
-            GConsole.println("  %s: Directory with changing source Java files.", cWatched);
-            GConsole.println("   %s: Directory to store %s.", cOutput, cPlayer);
+            GConsole.println("  %s: Source directory with changing source Java files.", cWatched);
+            GConsole.println("  %s: Destination coalesced file.", cOutput);
             GConsole.flush();
             System.exit(1);
         }
+        final Path filenamePath = outputPath.getFileName();
+        final String cFilename = GConsole.coloredText(filenamePath.toString(), GConsole.COLOR_BRIGHT_CYAN);
         if (!Files.isDirectory(watchedPath)) {
             GConsole.println("%s doesn't exist.", cWatched);
             GConsole.flush();
@@ -55,23 +56,28 @@ public final class App implements Runnable {
             GConsole.flush();
             System.exit(1);
         }
-        if (!Files.isRegularFile(watchedPath.resolve(Coalescer.PLAYER_JAVA))) {
-            GConsole.println("%s doesn't exist in %s.", cPlayer, cWatched);
+        if (!outputPath.getFileName().toString().endsWith(".java") || Files.isDirectory(outputPath)) {
+            GConsole.println("%s must be a java file.", cOutput);
             GConsole.flush();
             System.exit(1);
         }
-        if (outputPath.equals(watchedPath)) {
-            GConsole.println("%s can't be the same as %s.", cOutput, cWatched);
+        if (!Files.isRegularFile(watchedPath.resolve(filenamePath))) {
+            GConsole.println("%s doesn't exist in %s.", cFilename, cWatched);
             GConsole.flush();
             System.exit(1);
         }
-        if (!Files.isDirectory(outputPath)) {
-            GConsole.println("%s doesn't exist.", cOutput);
+        if (outputPath.getParent().equals(watchedPath)) {
+            GConsole.println("%s can't be in %s.", cOutput, cWatched);
             GConsole.flush();
             System.exit(1);
         }
-        if (!Files.isWritable(outputPath)) {
-            GConsole.println("Can't write to %s.", cOutput);
+        if (!Files.isDirectory(outputPath.getParent())) {
+            GConsole.println("%s directory doesn't exist.", cOutput);
+            GConsole.flush();
+            System.exit(1);
+        }
+        if (!Files.isWritable(outputPath.getParent())) {
+            GConsole.println("Can't write to %s directory.", cOutput);
             GConsole.flush();
             System.exit(1);
         }
@@ -88,15 +94,16 @@ public final class App implements Runnable {
     @Override
     public void run() {
         final ExecutorService pool = Executors.newSingleThreadExecutor();
-        pool.execute(new Coalescer(watchedPath, outputPath));
+        pool.execute(new Reactor(watchedPath, outputPath));
         try {
             GSystem.waitForSigInt();
             pool.shutdownNow();
-            pool.awaitTermination(2, TimeUnit.SECONDS);
+            if (pool.awaitTermination(2, TimeUnit.SECONDS)) {
+                GConsole.println("%nGood luck!");
+                GConsole.flush();
+            }
         } catch (final InterruptedException e) {
             // No-op.
         }
-        GConsole.println("%nGood luck!");
-        GConsole.flush();
     }
 }

@@ -1,8 +1,11 @@
-// Copyright 2020 GlitchyByte
+// Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.gbcc;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,7 @@ public final class JavaClass {
     /**
      * All lines in the file.
      */
-    private final List<String> lines;
+    public final List<String> lines;
 
     /**
      * Creates a Java file contents holder.
@@ -33,19 +36,27 @@ public final class JavaClass {
     }
 
     /**
+     * Creates a Java file contents holder.
+     *
+     * @param classPath Path to file.
+     * @throws IOException If there is a problem reading the file.
+     */
+    public JavaClass(final Path classPath) throws IOException {
+        this(classPath.getFileName().toString(), Files.readAllLines(classPath));
+    }
+
+    /**
      * Extracts only the imports from the Java file.
      *
      * @return The imports from the Java file.
      */
     public List<String> getImports() {
         final List<String> imports = new ArrayList<>();
-        boolean isDone;
         for (final String line: lines) {
-            final String trimmed = line.trim();
-            isDone = trimmed.contains("class ");
-            if (isDone) {
+            if (line.contains("class ")) {
                 break;
             }
+            final String trimmed = line.trim();
             if (trimmed.startsWith("import ")) {
                 imports.add(trimmed);
             }
