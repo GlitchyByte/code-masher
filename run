@@ -69,7 +69,12 @@ if test -z "$version"; then
 fi
 
 # Get tar path.
-tarPath="$distDir/$appName-$version.tar"
+if test "$version" = "unspecified"; then
+  tarName="$appName.tar"
+else
+  tarName="$appName-$version.tar"
+fi
+tarPath="$distDir/$tarName"
 if test -z "$tarPath"; then
   echo "No distribution found!"
   exit 1
