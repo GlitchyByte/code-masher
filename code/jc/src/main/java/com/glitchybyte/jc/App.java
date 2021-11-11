@@ -1,7 +1,7 @@
 // Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.gbcc;
+package com.glitchybyte.jc;
 
 import com.glitchybyte.glib.GStrings;
 import com.glitchybyte.glib.GSystem;
@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * GlitchyByte CodinGame Coalescer.
+ * Java Coalescer for CodinGame.
  * <p>
  * Coalesces a group of Java files into a single file usable on CodinGame.
  */
@@ -38,7 +38,7 @@ public final class App implements Runnable {
         final String cWatched = GConsole.coloredText("WATCHED_DIR", GConsole.COLOR_BRIGHT_WHITE);
         final String cOutput = GConsole.coloredText("OUTPUT_FILE", GConsole.COLOR_BRIGHT_WHITE);
         if ((watchedPath == null) || (outputPath == null)) {
-            GConsole.println("gbcc %s %s", cWatched, cOutput);
+            GConsole.println("jc %s %s", cWatched, cOutput);
             GConsole.println("  %s: Source directory with changing source Java files.", cWatched);
             GConsole.println("  %s: Destination coalesced file.", cOutput);
             GConsole.flush();

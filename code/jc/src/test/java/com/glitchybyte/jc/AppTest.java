@@ -1,4 +1,4 @@
-package com.glitchybyte.gbcc;
+package com.glitchybyte.jc;
 
 // TODO: Create tests if needed.
 //import org.junit.jupiter.api.Test;

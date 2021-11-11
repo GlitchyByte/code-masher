@@ -3,7 +3,6 @@
 
 plugins {
     application
-    id("org.graalvm.buildtools.native") version "0.9.5"
 }
 
 repositories {
@@ -30,10 +29,10 @@ tasks.test {
 }
 
 // Setup build info.
-group = "com.glitchybyte.gbcc"
-version = "2.0.0"
+group = "com.glitchybyte.jc"
+version = "2.2.0"
 
 application {
     // Set app entry point.
-    mainClass.set("com.glitchybyte.gbcc.App")
+    mainClass.set("com.glitchybyte.jc.App")
 }

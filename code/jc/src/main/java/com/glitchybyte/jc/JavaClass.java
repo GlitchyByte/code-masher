@@ -1,7 +1,7 @@
 // Copyright 2020-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.gbcc;
+package com.glitchybyte.jc;
 
 import java.io.IOException;
 import java.nio.file.Files;
