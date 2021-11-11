@@ -15,12 +15,12 @@ public final class Coalescer {
     /**
      * Magic comment to be replaced by a timestamp.
      */
-    private static final String MAGIC_COMMENT_UPDATESTAMP = "[[GBCC::UPDATESTAMP]]";
+    private static final String MAGIC_COMMENT_UPDATESTAMP = "[[JC::UPDATESTAMP]]";
 
     /**
      * Magic comment to be replaced by all other Java classes.
      */
-    private static final String MAGIC_COMMENT_CODE = "[[GBCC::CODE]]";
+    private static final String MAGIC_COMMENT_CODE = "[[JC::CODE]]";
 
     /**
      * Timestamp formatter.
