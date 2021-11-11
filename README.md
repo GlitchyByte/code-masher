@@ -1,6 +1,6 @@
 # Java Coalescer for CodinGame challenges
 
-The GlitchyByte CodinGame Java Coalescer, or GBCC for short, is a tool that allows you to code in Java, using multiple class files like
+The Java Coalescer for CodinGame, or JC for short, is a tool that allows you to code in Java, using multiple class files like
 a normal app would, when participating in [CodinGame](https://www.codingame.com/) challenges or competitions.
 
 ---
