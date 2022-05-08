@@ -1,10 +1,10 @@
-// Copyright 2014-2020 GlitchyByte
+// Copyright 2014-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.log;
 
-import com.glitchybyte.glib.GStrings;
 import com.glitchybyte.glib.GObjects;
+import com.glitchybyte.glib.GStrings;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +18,7 @@ import java.util.logging.*;
  * Logger class.
  * <p>
  * Implements a nice time format and shows thread name.
- * Made to log one liners (except for exceptions).
+ * Made to log one-liners (except for exceptions).
  * Set logger name before use to change default name.
  * Default logging level is CONFIG.
  */
@@ -42,16 +42,19 @@ public final class GLog {
                 final String dateTime = localDateFormatter.format(record.getInstant());
                 final Object[] parameters = record.getParameters();
                 final String threadName;
+                final String className;
                 final String message;
                 final Throwable throwable;
                 if ((parameters == null) || (parameters.length == 0)) {
                     threadName = null;
+                    className = null;
                     message = record.getMessage();
                     throwable = record.getThrown();
                 } else {
                     threadName = GObjects.castOrNull(parameters[0], String.class);
-                    if (parameters.length >= 2) {
-                        throwable = GObjects.castOrNull(parameters[1], Throwable.class);
+                    className = GObjects.castOrNull(parameters[1], String.class);
+                    if (parameters.length > 2) {
+                        throwable = GObjects.castOrNull(parameters[2], Throwable.class);
                         message = throwable != null ? throwable.toString() : record.getMessage();
                     } else {
                         message = record.getMessage();
@@ -65,6 +68,12 @@ public final class GLog {
                     sb.append(" [");
                     sb.append(threadName);
                     sb.append(']');
+                }
+                if (className != null) {
+                    sb.append(' ');
+                    final int p = className.lastIndexOf('.');
+                    sb.append(p == -1 ? className : className.substring(p + 1));
+                    sb.append(':');
                 }
                 sb.append(' ');
                 sb.append(message);
@@ -90,6 +99,15 @@ public final class GLog {
             logger.setLevel(Level.CONFIG);
         }
         return logger;
+    }
+
+    /**
+     * Resets the default logger.
+     * <p>
+     * Clears the default logger. Next time a log is issued, a new logger is created.
+     */
+    public static void resetLogger() {
+        logger = null;
     }
 
     private static final Map<String, Logger> extraLoggers = new HashMap<>();
@@ -143,12 +161,21 @@ public final class GLog {
      */
     public static void log(final Level level, final String format, final Object... args) {
         final Logger logger = getLogger();
-        logger.log(level, GStrings.format(format, args), Thread.currentThread().getName());
+        final Thread currentThread = Thread.currentThread();
+        logger.log(level, GStrings.format(format, args), new Object[] {
+                currentThread.getName(),
+                currentThread.getStackTrace()[3].getClassName()
+        });
     }
 
     private static void log(final Level level, final Throwable throwable) {
         final Logger logger = getLogger();
-        logger.log(level, null, new Object[] { Thread.currentThread().getName(), throwable });
+        final Thread currentThread = Thread.currentThread();
+        logger.log(level, null, new Object[] {
+                currentThread.getName(),
+                currentThread.getStackTrace()[3].getClassName(),
+                throwable
+        });
     }
 
     /**
@@ -158,7 +185,6 @@ public final class GLog {
      * @param args Arguments of format.
      */
     public static void finest(final String format, final Object... args) {
-
         log(Level.FINEST, format, args);
     }
 

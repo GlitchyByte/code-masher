@@ -1,4 +1,4 @@
-// Copyright 2020-2021 GlitchyByte
+// Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
@@ -15,18 +15,22 @@ java {
     }
 }
 
-tasks.test {
+tasks.named<Test>("test") {
     useJUnitPlatform()
     maxParallelForks = 4
 }
 
 dependencies {
     // Main dependencies.
-    api("com.google.code.gson:gson:2.8.8")
+    api("com.google.code.gson:gson:2.9.0")
     // Test dependencies.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.0.0"
+version = "1.1.3"
+
+tasks.named<Javadoc>("javadoc") {
+    title = "${rootProject.name} v${version} API"
+}

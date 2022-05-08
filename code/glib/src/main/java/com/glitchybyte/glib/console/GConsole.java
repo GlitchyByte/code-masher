@@ -33,7 +33,7 @@ public final class GConsole {
      */
     private static final String CSI = "\u001b[";
 //    private static final String CSI_CLEAR = CSI + "2J";
-    private static final String CSI_CLEAR_CURRENT_LINE = CSI + "K";
+    private static final String CSI_CLEAR_CURRENT_LINE = CSI + "2K";
     private static final String CSI_CLEAR_TO_END_OF_LINE = CSI + "0K";
     private static final String CSI_CLEAR_TO_START_OF_LINE = CSI + "1K";
 //    private static final String CSI_MOVE_TO = CSI + "%d;%df";
@@ -161,14 +161,29 @@ public final class GConsole {
 //        return CSI_CLEAR;
 //    }
 
+    /**
+     * Returns a {@code String} that will clear the current line when printed.
+     *
+     * @return {@code String} with encoded command.
+     */
     public static String clearCurrentLine() {
         return CSI_CLEAR_CURRENT_LINE;
     }
 
+    /**
+     * Returns a {@code String} that will clear to end of line when printed.
+     *
+     * @return {@code String} with encoded command.
+     */
     public static String clearToEndOfLine() {
         return CSI_CLEAR_TO_END_OF_LINE;
     }
 
+    /**
+     * Returns a {@code String} that will clear to start of line when printed.
+     *
+     * @return {@code String} with encoded command.
+     */
     public static String clearToStartOfLine() {
         return CSI_CLEAR_TO_START_OF_LINE;
     }

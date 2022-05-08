@@ -1,10 +1,12 @@
-// Copyright 2014-2020 GlitchyByte
+// Copyright 2014-2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
 
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.Base64;
 import java.util.Locale;
 
 /**
@@ -41,7 +43,7 @@ public final class GStrings {
     }
 
     /**
-     * Convenience replacement for String.format, but it already includes US locale.
+     * Convenience replacement for {@code String.format}, but it already includes US locale.
      *
      * @param format A format string.
      * @param args Arguments for format.
@@ -69,6 +71,26 @@ public final class GStrings {
      */
     public static String fromFloat(final float value) {
         return numberFormat.format(value);
+    }
+
+    /**
+     * Convenience base64 encoder. Assumes UTF-8 charset.
+     *
+     * @param message Message to encode.
+     * @return Encoded message.
+     */
+    public static String base64Encode(final String message) {
+        return Base64.getEncoder().encodeToString(message.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Convenience base64 decoder. Assumes UTF-8 charset.
+     *
+     * @param encoded Encoded message.
+     * @return Decoded message.
+     */
+    public static String base64Decode(final String encoded) {
+        return new String(Base64.getDecoder().decode(encoded), StandardCharsets.UTF_8);
     }
 
     private GStrings() {
