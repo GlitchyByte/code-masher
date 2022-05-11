@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.jc;
@@ -21,17 +21,17 @@ public final class MiniConsole {
         GConsole.flush();
     }
 
-    public void printInputFiles(final List<JavaClass> javaClasses) {
-        if (javaClasses.isEmpty()) {
+    public void printInputFiles(final List<JavaFile> javaFiles) {
+        if (javaFiles.isEmpty()) {
             GConsole.println("Read: %s", GConsole.coloredText("Nothing", GConsole.COLOR_BRIGHT_YELLOW));
             linesPrinted += 1;
         } else {
-            for (final JavaClass javaClass: javaClasses) {
+            for (final JavaFile javaFile: javaFiles) {
                 GConsole.println("Read: %s (%d lines)",
-                        GConsole.coloredText(javaClass.name, GConsole.COLOR_BRIGHT_GREEN),
-                        javaClass.lines.size());
+                        GConsole.coloredText(javaFile.name, GConsole.COLOR_BRIGHT_GREEN),
+                        javaFile.getOriginalLineCount());
             }
-            linesPrinted += javaClasses.size();
+            linesPrinted += javaFiles.size();
         }
         GConsole.flush();
     }

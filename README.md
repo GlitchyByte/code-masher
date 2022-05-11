@@ -1,5 +1,7 @@
 # Java Coalescer for CodinGame challenges
 
+![Version](https://img.shields.io/badge/Version-2.3.0-green) ![Java](https://img.shields.io/badge/Java-17-orange)
+
 The Java Coalescer for CodinGame, or JC for short, is a tool that allows you to code in Java, using multiple class files like
 a normal app would, when participating in [CodinGame](https://www.codingame.com/) challenges or competitions.
 

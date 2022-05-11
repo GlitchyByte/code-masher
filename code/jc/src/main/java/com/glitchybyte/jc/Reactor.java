@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.jc;
@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Reactor implements Runnable {
 
@@ -51,9 +50,9 @@ public class Reactor implements Runnable {
             final MiniConsole miniConsole = new MiniConsole();
             while (true) {
                 miniConsole.clear();
-                final List<JavaClass> javaClasses = gatherJavaClasses(watchedPath);
-                miniConsole.printInputFiles(javaClasses);
-                final Coalescer coalescer = new Coalescer(javaClasses, getClassName(outputPath));
+                final List<JavaFile> javaFiles = gatherJavaFiles(watchedPath);
+                miniConsole.printInputFiles(javaFiles);
+                final Coalescer coalescer = new Coalescer(javaFiles, getClassName(outputPath));
                 final String coalescedClass = coalescer.coalesce();
                 Files.writeString(outputPath, coalescedClass);
                 if (doesClassCompile(coalescedClass)) {
@@ -88,17 +87,20 @@ public class Reactor implements Runnable {
         return filename.substring(0, filename.length() - 5);
     }
 
-    private List<JavaClass> gatherJavaClasses(final Path path) throws IOException {
-        final List<Path> javaClassPaths = Files.list(path)
-                .filter(p -> Files.isRegularFile(p) &&
-                        (p.getFileName().toString().length() > 5) &&
-                        p.getFileName().toString().endsWith(".java"))
-                .collect(Collectors.toList());
-        final List<JavaClass> javaClasses = new ArrayList<>(javaClassPaths.size());
-        for (final Path javaClassPath: javaClassPaths) {
-            javaClasses.add(new JavaClass(javaClassPath));
+    private List<JavaFile> gatherJavaFiles(final Path path) throws IOException {
+        final List<Path> javaFilePaths;
+        try (final var fileStream = Files.list(path)) {
+            javaFilePaths = fileStream
+                    .filter(p -> Files.isRegularFile(p) &&
+                            (p.getFileName().toString().length() > 5) &&
+                            p.getFileName().toString().endsWith(".java"))
+                    .toList();
         }
-        return javaClasses;
+        final List<JavaFile> javaFiles = new ArrayList<>(javaFilePaths.size());
+        for (final Path javaFilePath: javaFilePaths) {
+            javaFiles.add(JavaFile.from(javaFilePath));
+        }
+        return javaFiles;
     }
 
     private boolean doesClassCompile(final String classCode) {

@@ -1,4 +1,4 @@
-// Copyright 2020-2021 GlitchyByte
+// Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.jc;
@@ -38,17 +38,17 @@ public final class Coalescer {
         return timestampFormatter.format(Instant.now());
     }
 
-    private final List<JavaClass> javaClasses;
+    private final List<JavaFile> javaFiles;
     private final String mainClassName;
 
     /**
      * Creates the coalescer.
      *
-     * @param javaClasses Java classes to coalesce.
+     * @param javaFiles Java classes to coalesce.
      * @param mainClassName Main class name.
      */
-    public Coalescer(final List<JavaClass> javaClasses, final String mainClassName) {
-        this.javaClasses = javaClasses;
+    public Coalescer(final List<JavaFile> javaFiles, final String mainClassName) {
+        this.javaFiles = javaFiles;
         this.mainClassName = mainClassName;
     }
 
@@ -56,13 +56,13 @@ public final class Coalescer {
         final StringBuilder sb = new StringBuilder();
         writeImports(sb);
         final String mainClassFilename = mainClassName + ".java";
-        JavaClass mainClass = null;
-        final List<JavaClass> otherClasses = new ArrayList<>(javaClasses.size() - 1);
-        for (final JavaClass javaClass: javaClasses) {
-            if (javaClass.name.equals(mainClassFilename)) {
-                mainClass = javaClass;
+        JavaFile mainClass = null;
+        final List<JavaFile> otherClasses = new ArrayList<>(javaFiles.size() - 1);
+        for (final JavaFile javaFile: javaFiles) {
+            if (javaFile.name.equals(mainClassFilename)) {
+                mainClass = javaFile;
             } else {
-                otherClasses.add(javaClass);
+                otherClasses.add(javaFile);
             }
         }
         if (mainClass == null) {
@@ -74,8 +74,8 @@ public final class Coalescer {
 
     private void writeImports(final StringBuilder sb) {
         final Set<String> imports = new HashSet<>();
-        javaClasses.forEach(javaClass -> imports.addAll(javaClass.getImports()));
-        for (final Iterator<String> iterator = imports.iterator(); iterator.hasNext() ;) {
+        javaFiles.forEach(javaFile -> imports.addAll(javaFile.getImports()));
+        for (final Iterator<String> iterator = imports.iterator(); iterator.hasNext();) {
             final String line = iterator.next();
             if (line.endsWith(".*;")) {
                 continue;
@@ -92,7 +92,7 @@ public final class Coalescer {
         sb.append(GStrings.NEW_LINE);
     }
 
-    private void writeMainClass(final StringBuilder sb, final JavaClass mainClass, final List<JavaClass> otherClasses) {
+    private void writeMainClass(final StringBuilder sb, final JavaFile mainClass, final List<JavaFile> otherClasses) {
         for (final String line: mainClass.getContents()) {
             if (line.contains(MAGIC_COMMENT_UPDATESTAMP)) {
                 sb.append("    // ").append(getTimestamp()).append(GStrings.NEW_LINE);
@@ -102,8 +102,8 @@ public final class Coalescer {
                 }
                 continue;
             } else if (line.contains(MAGIC_COMMENT_CODE)) {
-                for (final JavaClass javaClass: otherClasses) {
-                    writeOtherClass(sb, javaClass);
+                for (final JavaFile javaFile: otherClasses) {
+                    writeOtherClass(sb, javaFile);
                     sb.append(GStrings.NEW_LINE);
                 }
                 continue;
@@ -112,11 +112,15 @@ public final class Coalescer {
         }
     }
 
-    private void writeOtherClass(final StringBuilder sb, final JavaClass javaClass) {
+    private void writeOtherClass(final StringBuilder sb, final JavaFile javaFile) {
         boolean first = true;
-        for (final String line: javaClass.getContents()) {
+        for (final String line: javaFile.getContents()) {
             if (first) {
-                sb.append("    static ").append(line).append(GStrings.NEW_LINE);
+                sb.append("    ");
+                if (javaFile.getType() == JavaFileType.CLASS) {
+                    sb.append("static ");
+                }
+                sb.append(line).append(GStrings.NEW_LINE);
                 first = false;
                 continue;
             }

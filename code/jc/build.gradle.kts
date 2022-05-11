@@ -1,4 +1,4 @@
-// Copyright 2020-2021 GlitchyByte
+// Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 plugins {
@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":glib"))
     implementation("org.mdkt.compiler:InMemoryJavaCompiler:1.3.0")
     // Test dependencies.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 tasks.test {
@@ -30,7 +30,7 @@ tasks.test {
 
 // Setup build info.
 group = "com.glitchybyte.jc"
-version = "2.2.0"
+version = "2.3.0"
 
 application {
     // Set app entry point.
