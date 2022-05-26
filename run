@@ -5,13 +5,30 @@
 # Run app!
 
 # Capture caller directory and script directory.
-callingDir="$(pwd)"
-scriptDir="$(cd $(dirname "$0") && pwd)"
+calling_dir="$(pwd)"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+
+# Colors.
+c_reset=$(tput sgr0)
+c_bold=$(tput bold)
+c_black=$(tput setaf 0)
+c_red=$(tput setaf 1)
+c_green=$(tput setaf 2)
+c_yellow=$(tput setaf 3)
+c_blue=$(tput setaf 4)
+c_magenta=$(tput setaf 5)
+c_cyan=$(tput setaf 6)
+c_white=$(tput setaf 7)
+
+# Echo to stderr.
+echoerr() {
+  >&2 echo "$@"
+}
 
 # Capture project to run.
 project=$1
 if test -z "$project"; then
-  echo "Usage: ./run PROJECT [arg1 arg2 ...]"
+  echo "Usage: ${c_bold}./run${c_reset} ${c_blue}${c_bold}PROJECT${c_reset} ${c_blue}[arg1 arg2 ...]${c_reset}"
   exit 1
 fi
 
@@ -24,80 +41,76 @@ cd code || exit 1
 
 # Build distribution and gather properties.
 # We do it in one pass for speed.
-gradleProperties=$(./gradlew "$project":build "$project":properties)
+gradle_properties=$(./gradlew "$project":build "$project":properties)
 ./gradlew "$project":build
 if test $? -ne 0; then
-  echo "Build failed!"
-  cd "$callingDir"
+  echoerr "Build failed!"
+  cd "$calling_dir"
   exit 1
 fi
 
-# Get Gradle properties.
-# We did this already for speed. Read above.
-# gradleProperties=$(./gradlew "$project":properties)
-
 # Go back to caller directory.
-cd "$callingDir" || exit 1
+cd "$calling_dir" || exit 1
 
 # Get build directory.
-buildDir=$(echo "$gradleProperties" | sed -n 's/^buildDir: \(.*\)/\1/p')
-if test -z "$buildDir"; then
-  echo "Build directory not found!"
+build_dir=$(echo "$gradle_properties" | sed -n 's/^buildDir: \(.*\)/\1/p')
+if test -z "$build_dir"; then
+  echoerr "Build directory not found!"
   exit 1
 fi
 
 # Get distribution directory.
-distsDirName=$(echo "$gradleProperties" | sed -n 's/^distsDirName: \(.*\)/\1/p')
-if test -z "$distsDirName"; then
-  echo "Distribution directory not found!"
+dist_subdir=$(echo "$gradle_properties" | sed -n 's/^distsDirName: \(.*\)/\1/p')
+if test -z "$dist_subdir"; then
+  echoerr "Distribution directory not found!"
   exit 1
 fi
-distDir="$buildDir/$distsDirName"
+dist_dir="$build_dir/$dist_subdir"
 
 # Get application name.
-appName=$(echo "$gradleProperties" | sed -n 's/^applicationName: \(.*\)/\1/p')
-if test -z "$appName"; then
-  echo "Application name not found!"
+app_name=$(echo "$gradle_properties" | sed -n 's/^applicationName: \(.*\)/\1/p')
+if test -z "$app_name"; then
+  echoerr "Application name not found!"
   exit 1
 fi
 
 # Get version.
-version=$(echo "$gradleProperties" | sed -n 's/^version: \(.*\)/\1/p')
+version=$(echo "$gradle_properties" | sed -n 's/^version: \(.*\)/\1/p')
 if test -z "$version"; then
-  echo "Version not found!"
+  echoerr "Version not found!"
   exit 1
 fi
 
 # Get tar path.
 if test "$version" = "unspecified"; then
-  tarName="$appName.tar"
+  tar_name="$app_name.tar"
 else
-  tarName="$appName-$version.tar"
+  tar_name="$app_name-$version.tar"
 fi
-tarPath="$distDir/$tarName"
-if test -z "$tarPath"; then
-  echo "No distribution found!"
+tar_path="$dist_dir/$tar_name"
+if test -z "$tar_path"; then
+  echoerr "No distribution found!"
   exit 1
 fi
 
 # Get work dir.
-workDir="${tarPath%.tar}"
+work_dir="${tar_path%.tar}"
 
 # Remove work directory, if it exists.
-if test -d "$workDir"; then
-  rm -dr "$workDir"
+if test -d "$work_dir"; then
+  rm -dr "$work_dir"
   if test $? -ne 0; then
-    echo "Can't remove '$workDir'!"
+    echoerr "Can't remove '$work_dir'!"
     exit 1
   fi
 fi
 
 # Extract distribution into work dir.
-tar -xf "$tarPath" -C "$distDir"
+tar -xf "$tar_path" -C "$dist_dir"
 if test $? -gt 0; then
-  echo "Tar expansion failed!"
+  echoerr "Tar expansion failed!"
   exit 1
 fi
 
 # Run app.
-"$workDir"/bin/"$appName" $args
+"$work_dir"/bin/"$app_name" $args
