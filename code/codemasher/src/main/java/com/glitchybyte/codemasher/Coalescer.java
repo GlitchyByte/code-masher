@@ -1,7 +1,7 @@
 // Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.jc;
+package com.glitchybyte.codemasher;
 
 import com.glitchybyte.glib.GStrings;
 
@@ -15,12 +15,12 @@ public final class Coalescer {
     /**
      * Magic comment to be replaced by a timestamp.
      */
-    private static final String MAGIC_COMMENT_UPDATESTAMP = "[[JC::UPDATESTAMP]]";
+    private static final String MAGIC_COMMENT_UPDATESTAMP = "[[CM::UPDATESTAMP]]";
 
     /**
      * Magic comment to be replaced by all other Java classes.
      */
-    private static final String MAGIC_COMMENT_CODE = "[[JC::CODE]]";
+    private static final String MAGIC_COMMENT_CODE = "[[CM::CODE]]";
 
     /**
      * Timestamp formatter.

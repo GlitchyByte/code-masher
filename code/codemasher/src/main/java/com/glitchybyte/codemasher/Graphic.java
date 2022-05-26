@@ -1,7 +1,7 @@
 // Copyright 2021 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.jc;
+package com.glitchybyte.codemasher;
 
 import java.util.*;
 

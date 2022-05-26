@@ -29,10 +29,10 @@ tasks.test {
 }
 
 // Setup build info.
-group = "com.glitchybyte.jc"
-version = "2.3.0"
+group = "com.glitchybyte.codemasher"
+version = "3.0.0"
 
 application {
     // Set app entry point.
-    mainClass.set("com.glitchybyte.jc.App")
+    mainClass.set("com.glitchybyte.codemasher.App")
 }

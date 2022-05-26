@@ -1,2 +1,2 @@
-rootProject.name = "cg-java-coalescer"
-include("glib", "jc")
+rootProject.name = "code-masher"
+include("glib", "codemasher")

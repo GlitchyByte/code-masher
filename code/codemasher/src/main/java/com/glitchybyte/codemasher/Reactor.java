@@ -1,7 +1,7 @@
 // Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.jc;
+package com.glitchybyte.codemasher;
 
 import com.glitchybyte.glib.console.GConsole;
 import com.sun.nio.file.SensitivityWatchEventModifier;
