@@ -1,4 +1,4 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib.cache;
@@ -15,7 +15,7 @@ import java.util.*;
  * @param <K> Type of key.
  * @param <V> Type of value.
  */
-public class GTimedCacheMap<K, V> implements Map<K, V> {
+public class GExpiringCacheMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> cacheMap;
     private final Map<K, Instant> timeMap;
@@ -26,7 +26,7 @@ public class GTimedCacheMap<K, V> implements Map<K, V> {
      *
      * @param timeToLive Time to live for a given entry.
      */
-    public GTimedCacheMap(final TemporalAmount timeToLive) {
+    public GExpiringCacheMap(final TemporalAmount timeToLive) {
         cacheMap = new HashMap<>();
         timeMap = new LinkedHashMap<>();
         this.timeToLive = timeToLive;
@@ -38,7 +38,7 @@ public class GTimedCacheMap<K, V> implements Map<K, V> {
      * @param amount The amount of TTL duration.
      * @param unit The unit TLL is measured in.
      */
-    public GTimedCacheMap(final long amount, final TemporalUnit unit) {
+    public GExpiringCacheMap(final long amount, final TemporalUnit unit) {
         this(Duration.of(amount, unit));
     }
 

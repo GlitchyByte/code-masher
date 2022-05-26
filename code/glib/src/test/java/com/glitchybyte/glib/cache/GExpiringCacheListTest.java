@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GTimeCacheListTest {
+public class GExpiringCacheListTest {
 
     private void delay(final long millis) {
         try {
@@ -23,14 +23,14 @@ public class GTimeCacheListTest {
 
     @Test
     void canGet() {
-        final List<String> cache = new GTimedCacheList<>(1, ChronoUnit.MINUTES);
+        final List<String> cache = new GExpiringCacheList<>(1, ChronoUnit.MINUTES);
         cache.add("one");
         assertEquals("one", cache.get(0));
     }
 
     @Test
     void canRemove() {
-        final List<String> cache = new GTimedCacheList<>(1, ChronoUnit.MINUTES);
+        final List<String> cache = new GExpiringCacheList<>(1, ChronoUnit.MINUTES);
         cache.add("one");
         cache.remove(0);
         assertTrue(cache.isEmpty());
@@ -38,7 +38,7 @@ public class GTimeCacheListTest {
 
     @Test
     void itemExpiresAfterTime() {
-        final List<String> cache = new GTimedCacheList<>(500, ChronoUnit.MILLIS);
+        final List<String> cache = new GExpiringCacheList<>(500, ChronoUnit.MILLIS);
         cache.add("one");
         assertEquals("one", cache.get(0));
         delay(600);
@@ -47,7 +47,7 @@ public class GTimeCacheListTest {
 
     @Test
     void itemExpiresAndLaterItemRemains() {
-        final List<String> cache = new GTimedCacheList<>(500, ChronoUnit.MILLIS);
+        final List<String> cache = new GExpiringCacheList<>(500, ChronoUnit.MILLIS);
         cache.add("one");
         delay(300);
         assertEquals("one", cache.get(0));

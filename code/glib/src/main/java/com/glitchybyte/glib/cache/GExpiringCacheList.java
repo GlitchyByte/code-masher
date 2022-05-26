@@ -17,7 +17,7 @@ import java.util.ListIterator;
  *
  * @param <T> Type of item.
  */
-public class GTimedCacheList<T> extends AbstractSequentialList<T> {
+public class GExpiringCacheList<T> extends AbstractSequentialList<T> {
 
     private static final class CacheItem<T> {
 
@@ -38,7 +38,7 @@ public class GTimedCacheList<T> extends AbstractSequentialList<T> {
      *
      * @param timeToLive Time to live for a given item.
      */
-    public GTimedCacheList(final TemporalAmount timeToLive) {
+    public GExpiringCacheList(final TemporalAmount timeToLive) {
         cacheList = new LinkedList<>();
         this.timeToLive = timeToLive;
     }
@@ -49,7 +49,7 @@ public class GTimedCacheList<T> extends AbstractSequentialList<T> {
      * @param amount The amount of TTL duration.
      * @param unit The unit TLL is measured in.
      */
-    public GTimedCacheList(final long amount, final TemporalUnit unit) {
+    public GExpiringCacheList(final long amount, final TemporalUnit unit) {
         this(Duration.of(amount, unit));
     }
 
