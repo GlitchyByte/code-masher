@@ -1,12 +1,14 @@
-// Copyright 2021 GlitchyByte
+// Copyright 2021-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
 
+import com.glitchybyte.glib.function.GSupplierWithException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GObjectsTest {
 
@@ -51,5 +53,19 @@ public class GObjectsTest {
         final Horse horse = new Horse("Joergen", "Gray");
         final Bird bird = GObjects.castOrNull(horse, Bird.class);
         assertNull(bird);
+    }
+
+    @Test
+    void canSupplyObject() {
+        final GSupplierWithException<String> supplier = () -> "ok";
+        final String result = GObjects.suppliedObjectOrNull(supplier);
+        assertEquals("ok", result);
+    }
+
+    @Test
+    void cannotSupplyObject() {
+        final GSupplierWithException<String> supplier = () -> { throw new IOException("Dummy exception!"); };
+        final String result = GObjects.suppliedObjectOrNull(supplier);
+        assertNull(result);
     }
 }

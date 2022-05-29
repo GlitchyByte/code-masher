@@ -29,7 +29,7 @@ dependencies {
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.1.4"
+version = "1.2.0"
 
 tasks.named<Javadoc>("javadoc") {
     title = "${rootProject.name} v${version} API"
