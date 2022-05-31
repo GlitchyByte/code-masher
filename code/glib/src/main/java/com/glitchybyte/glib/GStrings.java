@@ -1,4 +1,4 @@
-// Copyright 2014-2021 GlitchyByte
+// Copyright 2014-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
@@ -71,6 +71,26 @@ public final class GStrings {
      */
     public static String fromFloat(final float value) {
         return numberFormat.format(value);
+    }
+
+    /**
+     * Convenience int to String formatter with human minimal representation.
+     *
+     * @param value Int to format into a String.
+     * @return Minimal String representation of the value.
+     */
+    public static String fromInt(final int value) {
+        return format("%,d", value);
+    }
+
+    /**
+     * Convenience long to String formatter with human minimal representation.
+     *
+     * @param value Long to format into a String.
+     * @return Minimal String representation of the value.
+     */
+    public static String fromLong(final long value) {
+        return format("%,d", value);
     }
 
     /**
