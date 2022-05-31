@@ -17,6 +17,7 @@ java {
 
 dependencies {
     // Main dependencies.
+    implementation("info.picocli:picocli:4.6.3")
     implementation(project(":glib"))
     implementation("org.mdkt.compiler:InMemoryJavaCompiler:1.3.0")
     // Test dependencies.

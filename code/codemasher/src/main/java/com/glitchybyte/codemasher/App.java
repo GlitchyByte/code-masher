@@ -1,24 +1,30 @@
-// Copyright 2020-2021 GlitchyByte
+// Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.codemasher;
 
-import com.glitchybyte.glib.GStrings;
+import com.glitchybyte.codemasher.masher.Masher;
 import com.glitchybyte.glib.GSystem;
 import com.glitchybyte.glib.console.GConsole;
+import com.glitchybyte.glib.wrapped.GWrappedString;
+import picocli.CommandLine;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Java Coalescer for CodinGame.
+ * CodeMasher - Java coalescer for CodinGame.
  * <p>
- * Coalesces a group of Java files into a single file usable on CodinGame.
+ * Coalesces Java files into a single file usable for CodinGame bots.
  */
-public final class App implements Runnable {
+@CommandLine.Command(name = "codemasher", mixinStandardHelpOptions = true, version = "codemasher 3.0.0",
+        description = "Coalesces Java files into a single file usable for CodinGame bots.",
+        footer = "Use @|bold Ctrl + C|@ to exit.")
+public final class App implements Callable<Integer> {
 
     /**
      * Entry point.
@@ -26,75 +32,43 @@ public final class App implements Runnable {
      * @param args Command line arguments.
      */
     public static void main(final String[] args) {
-        final Path watchedPath = args.length == 0 ? null : Path.of(args[0]).normalize();
-        final Path outputPath = args.length == 0 ? null : Path.of(args[1]).normalize();
-        verifyParameters(watchedPath, outputPath);
-        GConsole.println(GStrings.format("Use %s to exit.", GConsole.coloredText("Ctrl + C", GConsole.COLOR_BRIGHT_WHITE)));
-        final App app = new App(watchedPath, outputPath);
-        app.run();
+        final CommandLine.Help.ColorScheme colorScheme = new CommandLine.Help.ColorScheme.Builder()
+                .commands(CommandLine.Help.Ansi.Style.bold)
+                .options(CommandLine.Help.Ansi.Style.fg_cyan)
+                .parameters(CommandLine.Help.Ansi.Style.fg_cyan)
+                .optionParams(CommandLine.Help.Ansi.Style.fg_black, CommandLine.Help.Ansi.Style.bold, CommandLine.Help.Ansi.Style.italic)
+                .errors(CommandLine.Help.Ansi.Style.fg_red, CommandLine.Help.Ansi.Style.bold)
+                .stackTraces(CommandLine.Help.Ansi.Style.italic)
+                .applySystemProperties()
+                .build();
+        final int exitCode = new CommandLine(new App())
+                .setColorScheme(colorScheme)
+                .execute(args);
+        System.exit(exitCode);
     }
 
-    private static void verifyParameters(final Path watchedPath, final Path outputPath) {
-        final String cWatched = GConsole.coloredText("WATCHED_DIR", GConsole.COLOR_BRIGHT_WHITE);
-        final String cOutput = GConsole.coloredText("OUTPUT_FILE", GConsole.COLOR_BRIGHT_WHITE);
-        if ((watchedPath == null) || (outputPath == null)) {
-            GConsole.println("jc %s %s", cWatched, cOutput);
-            GConsole.println("  %s: Source directory with changing source Java files.", cWatched);
-            GConsole.println("  %s: Destination coalesced file.", cOutput);
-            GConsole.flush();
-            System.exit(1);
-        }
-        final Path filenamePath = outputPath.getFileName();
-        final String cFilename = GConsole.coloredText(filenamePath.toString(), GConsole.COLOR_BRIGHT_CYAN);
-        if (!Files.isDirectory(watchedPath)) {
-            GConsole.println("%s doesn't exist.", cWatched);
-            GConsole.flush();
-            System.exit(1);
-        }
-        if (!Files.isReadable(watchedPath)) {
-            GConsole.println("Can't read from %s.", cWatched);
-            GConsole.flush();
-            System.exit(1);
-        }
-        if (!outputPath.getFileName().toString().endsWith(".java") || Files.isDirectory(outputPath)) {
-            GConsole.println("%s must be a java file.", cOutput);
-            GConsole.flush();
-            System.exit(1);
-        }
-        if (!Files.isRegularFile(watchedPath.resolve(filenamePath))) {
-            GConsole.println("%s doesn't exist in %s.", cFilename, cWatched);
-            GConsole.flush();
-            System.exit(1);
-        }
-        if (outputPath.getParent().equals(watchedPath)) {
-            GConsole.println("%s can't be in %s.", cOutput, cWatched);
-            GConsole.flush();
-            System.exit(1);
-        }
-        if (!Files.isDirectory(outputPath.getParent())) {
-            GConsole.println("%s directory doesn't exist.", cOutput);
-            GConsole.flush();
-            System.exit(1);
-        }
-        if (!Files.isWritable(outputPath.getParent())) {
-            GConsole.println("Can't write to %s directory.", cOutput);
-            GConsole.flush();
-            System.exit(1);
-        }
-    }
+    @CommandLine.Spec
+    private CommandLine.Model.CommandSpec spec;
 
-    private final Path watchedPath;
-    private final Path outputPath;
+    @CommandLine.Option(names = { "-m", "--main" }, paramLabel = "MAIN_JAVA_FILENAME", defaultValue = "Player.java",
+            description = "Main Java filename. Default is @|bold ${DEFAULT-VALUE}|@.")
+    private String mainJavaFilename;
 
-    public App(final Path watchedPath, final Path outputPath) {
-        this.watchedPath = watchedPath;
-        this.outputPath = outputPath;
-    }
+    @CommandLine.Option(names = { "-w", "--watched" }, paramLabel = "WATCHED_DIR", required = true,
+            description = "Source directory with changing source Java files.")
+    private Path watchedPath;
+
+    @CommandLine.Option(names = { "-l", "--localhost" }, defaultValue = "false",
+            description = "If it should bind to localhost only. Default is @|bold ${DEFAULT-VALUE}|@.")
+    private boolean bindServerToLocalhostOnly;
+
+    private final GWrappedString coalescedClass = new GWrappedString();
 
     @Override
-    public void run() {
+    public Integer call() {
+        validate();
         final ExecutorService pool = Executors.newSingleThreadExecutor();
-        pool.execute(new Reactor(watchedPath, outputPath));
+        pool.execute(new Masher(watchedPath, mainJavaFilename, coalescedClass));
         try {
             GSystem.waitForSigInt();
             pool.shutdownNow();
@@ -104,6 +78,26 @@ public final class App implements Runnable {
             }
         } catch (final InterruptedException e) {
             // No-op.
+        }
+        return 0;
+    }
+
+    private void validate() {
+        // Watched path must be an existing directory.
+        if (!Files.isDirectory(watchedPath)) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "WATCHED_DIR must exist.");
+        }
+        // Watched path must be readable to this user.
+        if (!Files.isReadable(watchedPath)) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "Can't read from WATCHED_DIR.");
+        }
+        // Main file must be a java file.
+        if (!mainJavaFilename.endsWith(".java")) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "MAIN_JAVA_FILENAME must be a Java file.");
+        }
+        // Main file must exist.
+        if (!Files.isRegularFile(watchedPath.resolve(mainJavaFilename))) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "MAIN_JAVA_FILENAME must exist in WATCHED_DIR.");
         }
     }
 }

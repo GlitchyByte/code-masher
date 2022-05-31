@@ -1,7 +1,7 @@
 // Copyright 2020-2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
-package com.glitchybyte.codemasher;
+package com.glitchybyte.codemasher.masher;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,7 +57,7 @@ public final class JavaFile {
      *
      * @param name Filename.
      */
-    public JavaFile(final String name) {
+    private JavaFile(final String name) {
         this.name = name;
     }
 
@@ -103,7 +103,7 @@ public final class JavaFile {
      * @param lines All lines in the file.
      * @return A fully parsed JavaFile object.
      */
-    public JavaFile parse(final List<String> lines) {
+    private JavaFile parse(final List<String> lines) {
         originalLineCount = lines.size();
         imports = parseImports(lines);
         contents = parseContents(lines);
