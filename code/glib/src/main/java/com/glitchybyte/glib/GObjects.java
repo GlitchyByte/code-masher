@@ -3,8 +3,6 @@
 
 package com.glitchybyte.glib;
 
-import com.glitchybyte.glib.function.GSupplierWithException;
-
 import java.util.function.BooleanSupplier;
 
 /**
@@ -42,21 +40,6 @@ public final class GObjects {
             return null;
         }
         return tClass.isInstance(obj) ? tClass.cast(obj) : null;
-    }
-
-    /**
-     * Returns the supplier result, or null if there was an exception.
-     *
-     * @param supplier Result supplier.
-     * @return The supplier result, or null if there was an exception.
-     * @param <T> Type of result.
-     */
-    public static <T> T suppliedObjectOrNull(final GSupplierWithException<T> supplier) {
-        try {
-            return supplier.get();
-        } catch (final Exception e) {
-            return null;
-        }
     }
 
     private GObjects() {

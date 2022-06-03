@@ -5,6 +5,8 @@ package com.glitchybyte.glib;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GStringsTest {
@@ -35,6 +37,34 @@ public class GStringsTest {
         final double value = 1.9876;
         final String output = GStrings.fromDouble(value);
         assertEquals("1.988", output);
+    }
+
+    @Test
+    void formatInt() {
+        final int value = 53280;
+        final String output = GStrings.fromInt(value);
+        assertEquals("53,280", output);
+    }
+
+    @Test
+    void formatLong() {
+        final long value = 64738L;
+        final String output = GStrings.fromLong(value);
+        assertEquals("64,738", output);
+    }
+
+    @Test
+    void convertCollectionToString() {
+        final List<Integer> list = List.of(3, 0, 8);
+        final String output = GStrings.fromCollection(list, ":");
+        assertEquals("3:0:8", output);
+    }
+
+    @Test
+    void convertCollectionToStringWithDefaultDelimiter() {
+        final List<Integer> list = List.of(3, 0, 8);
+        final String output = GStrings.fromCollection(list);
+        assertEquals("3, 0, 8", output);
     }
 
     @Test

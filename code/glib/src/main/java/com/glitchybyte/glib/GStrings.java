@@ -7,7 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * String utilities.
@@ -91,6 +93,29 @@ public final class GStrings {
      */
     public static String fromLong(final long value) {
         return format("%,d", value);
+    }
+
+    /**
+     * Convenience Collection to String representation.
+     *
+     * @param collection Collection to represent as String.
+     * @param delimiter Delimiter to use between elements.
+     * @return A String representing the collection.
+     * @param <T> Type of elements in the collection.
+     */
+    public static <T> String fromCollection(final Collection<T> collection, final String delimiter) {
+        return collection.stream().map(T::toString).collect(Collectors.joining(delimiter));
+    }
+
+    /**
+     * Convenience Collection to String representation with default comma delimiter.
+     *
+     * @param collection Collection to represent as String.
+     * @return A String representing the collection.
+     * @param <T> Type of elements in the collection.
+     */
+    public static <T> String fromCollection(final Collection<T> collection) {
+        return fromCollection(collection, ", ");
     }
 
     /**

@@ -3,12 +3,10 @@
 
 package com.glitchybyte.glib;
 
-import com.glitchybyte.glib.function.GSupplierWithException;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class GObjectsTest {
 
@@ -53,19 +51,5 @@ public class GObjectsTest {
         final Horse horse = new Horse("Joergen", "Gray");
         final Bird bird = GObjects.castOrNull(horse, Bird.class);
         assertNull(bird);
-    }
-
-    @Test
-    void canSupplyObject() {
-        final GSupplierWithException<String> supplier = () -> "ok";
-        final String result = GObjects.suppliedObjectOrNull(supplier);
-        assertEquals("ok", result);
-    }
-
-    @Test
-    void cannotSupplyObject() {
-        final GSupplierWithException<String> supplier = () -> { throw new IOException("Dummy exception!"); };
-        final String result = GObjects.suppliedObjectOrNull(supplier);
-        assertNull(result);
     }
 }
