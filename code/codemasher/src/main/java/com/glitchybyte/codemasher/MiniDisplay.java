@@ -5,12 +5,14 @@ package com.glitchybyte.codemasher;
 
 import com.glitchybyte.codemasher.masher.JavaFile;
 import com.glitchybyte.glib.GStrings;
+import com.glitchybyte.glib.GSystem;
 import com.glitchybyte.glib.console.GConsole;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public final class MiniDisplay {
 
@@ -18,9 +20,14 @@ public final class MiniDisplay {
             List.of(GConsole.coloredText("Nothing", GConsole.COLOR_BRIGHT_YELLOW));
 
     private int linesPrinted = 0;
+    private final boolean isServingOnLocalhostOnly;
     private String watchedDirectory = "";
     private List<String> javaFilesString = EMPTY_WATCHED_DIRECTORY;
     private String compilationString = "";
+
+    public MiniDisplay(final boolean isServingOnLocalhostOnly) {
+        this.isServingOnLocalhostOnly = isServingOnLocalhostOnly;
+    }
 
     public void clear() {
         GConsole.print(GConsole.cursorUp(linesPrinted));
@@ -34,6 +41,7 @@ public final class MiniDisplay {
 
     public void print() {
         clear();
+        GConsole.println(getNetworkString());
         GConsole.println(watchedDirectory);
         GConsole.print("Files:" + " ".repeat(40 - 6));
         GConsole.println(javaFilesString.get(0));
@@ -47,11 +55,22 @@ public final class MiniDisplay {
         }
         GConsole.println(compilationString);
         GConsole.println("Use %s to exit.", GConsole.coloredText("Ctrl + C", GConsole.COLOR_BRIGHT_WHITE));
-        linesPrinted = 1 + // Watched dir.
+        linesPrinted = 1 + // Network.
+                1 + // Watched dir.
                 ((javaFilesString.size() + 1) / 2) + // Java files.
                 1 + // Compilation.
                 1; // Exit.
         GConsole.flush();
+    }
+
+    private String getNetworkString() {
+        final Set<String> addresses = GSystem.getHostIPv4Addresses();
+        final Set<String> servingAddresses = isServingOnLocalhostOnly ?
+                Set.of(addresses.contains(GSystem.LOCALHOST) ? GSystem.LOCALHOST : "<NONE>") :
+                addresses;
+        return GStrings.format("Network: %s", GConsole.coloredText(
+                getTruncatedString(GStrings.fromCollection(servingAddresses), 80 - 9),
+                GConsole.COLOR_BRIGHT_WHITE));
     }
 
     public void setWatchedDirectory(final Path watchedPath) {

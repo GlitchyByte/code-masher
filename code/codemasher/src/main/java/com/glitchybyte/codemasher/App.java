@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * CodeMasher - Java coalescer for CodinGame.
- * <p>
- * Coalesces Java files into a single file usable for CodinGame bots.
+ *
+ * <p>Coalesces Java files into a single file usable for CodinGame bots.
  */
 @CommandLine.Command(name = "codemasher", mixinStandardHelpOptions = true, version = "codemasher 3.0.0",
         description = "Coalesces Java files into a single file usable for CodinGame bots.",
@@ -68,7 +68,8 @@ public final class App implements Callable<Integer> {
     public Integer call() {
         validate();
         final ExecutorService pool = Executors.newSingleThreadExecutor();
-        pool.execute(new Masher(watchedPath, mainJavaFilename, coalescedClass));
+        final MiniDisplay miniDisplay = new MiniDisplay(bindServerToLocalhostOnly);
+        pool.execute(new Masher(watchedPath, mainJavaFilename, coalescedClass, miniDisplay));
         try {
             GSystem.waitForSigInt();
             pool.shutdownNow();

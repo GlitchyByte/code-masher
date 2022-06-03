@@ -4,7 +4,7 @@
 package com.glitchybyte.codemasher.masher;
 
 import com.glitchybyte.codemasher.MiniDisplay;
-import com.glitchybyte.glib.GObjects;
+import com.glitchybyte.glib.function.GSupplierWithException;
 import com.glitchybyte.glib.log.GLog;
 import com.glitchybyte.glib.wrapped.GWrappedString;
 import com.sun.nio.file.SensitivityWatchEventModifier;
@@ -21,12 +21,14 @@ public final class Masher implements Runnable {
     private final Path watchedPath;
     private final String mainJavaFilename;
     private final GWrappedString coalescedClass;
-    private final MiniDisplay display = new MiniDisplay();
+    private final MiniDisplay display;
 
-    public Masher(final Path watchedPath, final String mainJavaFilename, final GWrappedString coalescedClass) {
+    public Masher(final Path watchedPath, final String mainJavaFilename, final GWrappedString coalescedClass,
+            final MiniDisplay miniDisplay) {
         this.watchedPath = watchedPath;
         this.mainJavaFilename = mainJavaFilename;
         this.coalescedClass = coalescedClass;
+        display = miniDisplay;
         display.setWatchedDirectory(watchedPath);
     }
 
@@ -101,10 +103,14 @@ public final class Masher implements Runnable {
 
     private List<JavaFile> gatherJavaFiles(final Path directory) throws IOException {
         try (final var fileStream = Files.list(directory)) {
-            return fileStream.filter(path -> {
-                final String name = path.getFileName().toString();
-                return Files.isRegularFile(path) && (name.length() > 5) && name.endsWith(".java");
-            }).map(path -> GObjects.suppliedObjectOrNull(() -> JavaFile.from(path))).filter(Objects::nonNull).toList();
+            return fileStream
+                    .filter(path -> {
+                        final String name = path.getFileName().toString();
+                        return Files.isRegularFile(path) && (name.length() > 5) && name.endsWith(".java");
+                    })
+                    .map(path -> GSupplierWithException.getOrNull(() -> JavaFile.from(path)))
+                    .filter(Objects::nonNull)
+                    .toList();
         }
     }
 
