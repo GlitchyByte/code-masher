@@ -1,2 +1,2 @@
 rootProject.name = "code-masher"
-include("glib", "codemasher")
+include("glib", "gspring", "codemasher")
