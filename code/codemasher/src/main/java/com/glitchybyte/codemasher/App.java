@@ -4,6 +4,7 @@
 package com.glitchybyte.codemasher;
 
 import com.glitchybyte.codemasher.masher.Masher;
+import com.glitchybyte.codemasher.server.Server;
 import com.glitchybyte.glib.GSystem;
 import com.glitchybyte.glib.console.GConsole;
 import com.glitchybyte.glib.wrapped.GWrappedString;
@@ -62,11 +63,16 @@ public final class App implements Callable<Integer> {
             description = "If it should bind to localhost only. Default is @|bold ${DEFAULT-VALUE}|@.")
     private boolean bindServerToLocalhostOnly;
 
+    @CommandLine.Option(names = { "-p", "--port" }, defaultValue = "10101",
+            description = "Port to serve the mashed code. Default is @|bold ${DEFAULT-VALUE}|@.")
+    private int serverPort;
+
     private final GWrappedString coalescedClass = new GWrappedString();
 
     @Override
     public Integer call() {
         validate();
+        Server.start(bindServerToLocalhostOnly, serverPort);
         final ExecutorService pool = Executors.newSingleThreadExecutor();
         final MiniDisplay miniDisplay = new MiniDisplay(bindServerToLocalhostOnly);
         pool.execute(new Masher(watchedPath, mainJavaFilename, coalescedClass, miniDisplay));

@@ -20,6 +20,7 @@ dependencies {
     implementation("info.picocli:picocli:4.6.3")
     implementation(project(":glib"))
     implementation("org.mdkt.compiler:InMemoryJavaCompiler:1.3.0")
+    implementation(project(":gspring"))
     // Test dependencies.
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
