@@ -33,7 +33,7 @@ public class ServeSingleSourceEndpoint {
 
     @CrossOrigin(origins = "*")
     @Async(AsyncConfiguration.TASK_EXECUTOR_CONTROLLER)
-    @GetMapping("/")
+    @GetMapping("/**")
     @SuppressWarnings("SynchronizeOnNonFinalField")
     public CompletableFuture<ResponseEntity<StreamingResponseBody>> serveSingleSource(final HttpServletRequest request) {
         final String code;
@@ -42,7 +42,7 @@ public class ServeSingleSourceEndpoint {
         }
         synchronized (this) {
             if (sourceMediaType == null) {
-                sourceMediaType = GSpringUtils.getMediaType("MashedCode.java", code);
+                sourceMediaType = GSpringUtils.getMediaType(Server.MAIN_JAVA_FILENAME, code);
             }
         }
         final StreamingResponseBody streamingResponseBody = outputStream -> {
