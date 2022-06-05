@@ -3,6 +3,7 @@
 
 package com.glitchybyte.gspring.template;
 
+import com.glitchybyte.gspring.GSpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
@@ -38,7 +39,7 @@ public abstract class DynamicFileEndpointBase extends FileEndpointBase {
         if (!Files.isRegularFile(localPath)) {
             return NOT_FOUND;
         }
-        final MediaType mediaType = getMediaType(localPath);
+        final MediaType mediaType = GSpringUtils.getMediaType(localPath);
         if (mediaType == null) {
             log.warn("MediaType not found for: {}", localPath);
             return NOT_FOUND;

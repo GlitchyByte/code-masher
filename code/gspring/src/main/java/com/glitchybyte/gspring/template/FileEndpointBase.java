@@ -3,14 +3,12 @@
 
 package com.glitchybyte.gspring.template;
 
-import org.apache.tika.Tika;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
@@ -75,19 +73,5 @@ public abstract class FileEndpointBase {
                         .contentType(mediaType)
                         .body(stream)
         );
-    }
-
-    protected MediaType getMediaType(final Path path) {
-        if (!Files.isRegularFile(path)) {
-            return null;
-        }
-        final String mimeType;
-        try {
-            final Tika tika = new Tika();
-            mimeType = tika.detect(path);
-        } catch (final IOException e) {
-            return null;
-        }
-        return MediaType.parseMediaType(mimeType);
     }
 }

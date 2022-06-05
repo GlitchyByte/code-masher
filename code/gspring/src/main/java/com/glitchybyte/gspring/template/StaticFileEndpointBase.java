@@ -3,6 +3,7 @@
 
 package com.glitchybyte.gspring.template;
 
+import com.glitchybyte.gspring.GSpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
@@ -48,7 +49,7 @@ public abstract class StaticFileEndpointBase extends FileEndpointBase {
             do {
                 final List<Path> working = newDirectories;
                 newDirectories = new ArrayList<>();
-                for (final Path path : working) {
+                for (final Path path: working) {
                     if (Files.isDirectory(path)) {
                         try (final Stream<Path> stream = Files.list(path)) {
                             stream.forEach(newDirectories::add);
@@ -58,7 +59,7 @@ public abstract class StaticFileEndpointBase extends FileEndpointBase {
                     if (!Files.isRegularFile(path)) {
                         continue;
                     }
-                    final MediaType mediaType = getMediaType(path);
+                    final MediaType mediaType = GSpringUtils.getMediaType(path);
                     if (mediaType == null) {
                         log.warn("MediaType not found for: {}", path);
                         continue;
