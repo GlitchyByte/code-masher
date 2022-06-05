@@ -72,7 +72,7 @@ public final class App implements Callable<Integer> {
     @Override
     public Integer call() {
         validate();
-        Server.start(bindServerToLocalhostOnly, serverPort);
+        Server.start(bindServerToLocalhostOnly, serverPort, coalescedClass);
         final ExecutorService pool = Executors.newSingleThreadExecutor();
         final MiniDisplay miniDisplay = new MiniDisplay(bindServerToLocalhostOnly);
         pool.execute(new Masher(watchedPath, mainJavaFilename, coalescedClass, miniDisplay));

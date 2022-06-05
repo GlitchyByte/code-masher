@@ -3,11 +3,9 @@
 
 package com.glitchybyte.codemasher.server;
 
+import com.glitchybyte.glib.wrapped.GWrappedString;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import java.util.Map;
 
 /**
  * Code server. Serves a singular file.
@@ -15,16 +13,16 @@ import java.util.Map;
 @SpringBootApplication
 public class Server {
 
-    public static final String LOCALHOST_ONLY = "localhostOnly";
-    public static final String PORT = "port";
+    public static boolean LOCALHOST_ONLY;
+    public static int PORT;
+    public static GWrappedString COALESCED_CLASS;
 
-    public static void start(final boolean isServingOnLocalhostOnly, final int port) {
+    public static void start(final boolean isServingOnLocalhostOnly, final int port, final GWrappedString coalescedClass) {
+        LOCALHOST_ONLY = isServingOnLocalhostOnly;
+        PORT = port;
+        COALESCED_CLASS = coalescedClass;
         final SpringApplication application = new SpringApplication(Server.class);
         application.setAddCommandLineProperties(false);
-        application.setDefaultProperties(Map.of(
-                LOCALHOST_ONLY, isServingOnLocalhostOnly,
-                PORT, port
-        ));
         application.run();
     }
 }
