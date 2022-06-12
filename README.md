@@ -1,6 +1,6 @@
 # Java Coalescer for CodinGame challenges
 
-![Version](https://img.shields.io/badge/Version-3.0.0-green) ![Java](https://img.shields.io/badge/Java-17-orange)
+![Version](https://img.shields.io/badge/Version-3.0.1-green) ![Java](https://img.shields.io/badge/Java-17-orange)
 
 CodeMasher is a tool that allows you to code in Java using multiple class files, like a normal app would, when working on [CodinGame](https://www.codingame.com/) bot challenges.
 

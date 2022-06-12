@@ -32,7 +32,7 @@ tasks.test {
 
 // Setup build info.
 group = "com.glitchybyte.codemasher"
-version = "3.0.0"
+version = "3.0.1"
 
 application {
     // Set app entry point.

@@ -66,7 +66,7 @@ public final class Coalescer {
             }
         }
         if (mainClass == null) {
-            throw new IllegalStateException("Main class not found!");
+            return null;
         }
         writeMainClass(sb, mainClass, otherClasses);
         return sb.toString();

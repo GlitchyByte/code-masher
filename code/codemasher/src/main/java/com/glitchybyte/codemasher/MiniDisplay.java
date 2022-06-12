@@ -21,12 +21,14 @@ public final class MiniDisplay {
 
     private int linesPrinted = 0;
     private final boolean isServingOnLocalhostOnly;
+    private final int serverPort;
     private String watchedDirectory = "";
     private List<String> javaFilesString = EMPTY_WATCHED_DIRECTORY;
     private String compilationString = "";
 
-    public MiniDisplay(final boolean isServingOnLocalhostOnly) {
+    public MiniDisplay(final boolean isServingOnLocalhostOnly, final int serverPort) {
         this.isServingOnLocalhostOnly = isServingOnLocalhostOnly;
+        this.serverPort = serverPort;
     }
 
     public void clear() {
@@ -57,26 +59,30 @@ public final class MiniDisplay {
         GConsole.println("Use %s to exit.", GConsole.coloredText("Ctrl + C", GConsole.COLOR_BRIGHT_WHITE));
         linesPrinted = 1 + // Network.
                 1 + // Watched dir.
-                ((javaFilesString.size() + 1) / 2) + // Java files.
+                ((javaFilesString.size() + 2) / 2) + // Java files.
                 1 + // Compilation.
                 1; // Exit.
         GConsole.flush();
     }
 
     private String getNetworkString() {
+        final String portString = Integer.toString(serverPort);
         final Set<String> addresses = GSystem.getHostIPv4Addresses();
         final Set<String> servingAddresses = isServingOnLocalhostOnly ?
                 Set.of(addresses.contains(GSystem.LOCALHOST) ? GSystem.LOCALHOST : "<NONE>") :
                 addresses;
-        return GStrings.format("Network: %s", GConsole.coloredText(
-                getTruncatedString(GStrings.fromCollection(servingAddresses), 80 - 9),
-                GConsole.COLOR_BRIGHT_WHITE));
+        final int addressesLength = 80 - 9 - 2 - portString.length();
+        return GStrings.format("Network: %s :%s",
+                GConsole.coloredText(getTruncatedString(GStrings.fromCollection(servingAddresses), addressesLength), GConsole.COLOR_BRIGHT_WHITE),
+                GConsole.coloredText(portString, GConsole.COLOR_BRIGHT_WHITE)
+        );
     }
 
     public void setWatchedDirectory(final Path watchedPath) {
         watchedDirectory = GStrings.format("Watching: %s", GConsole.coloredText(
                 getTruncatedString(watchedPath.toString(), 80 - 10),
-                GConsole.COLOR_BRIGHT_WHITE));
+                GConsole.COLOR_BRIGHT_WHITE)
+        );
     }
 
     public void setInputFiles(final String mainJavaFilename, final List<JavaFile> javaFiles) {
@@ -88,8 +94,8 @@ public final class MiniDisplay {
         final JavaFile mainJavaFile = javaFiles.stream()
                 .filter(javaFile -> javaFile.name.equals(mainJavaFilename))
                 .findFirst()
-                .orElseThrow();
-        javaFilesString.add(getJavaFileString(mainJavaFile));
+                .orElse(null);
+        javaFilesString.add(mainJavaFile == null ? getMissingJavaFileString(mainJavaFilename) : getJavaFileString(mainJavaFile));
         javaFiles.stream()
                 .filter(javaFile -> !javaFile.name.equals(mainJavaFilename))
                 .sorted(Comparator.comparing(s -> s.name))
@@ -108,6 +114,15 @@ public final class MiniDisplay {
         );
     }
 
+    private String getMissingJavaFileString(final String javaFilename) {
+        final int availableLength = 40;
+        final String name = getTruncatedString(javaFilename, availableLength);
+        return GStrings.format("%s%s",
+                GConsole.coloredText(name, GConsole.COLOR_BRIGHT_RED),
+                " ".repeat(availableLength - name.length())
+        );
+    }
+
     private String getTruncatedString(final String line, final int maxLength) {
         final int length = line.length();
         if (length <= maxLength) {
@@ -119,11 +134,12 @@ public final class MiniDisplay {
     }
 
     public void setCompilationResult(final String classCode, final boolean success) {
-        final long lineCount = classCode.lines().count();
+        final long lineCount = classCode == null ? -1 : classCode.lines().count();
         compilationString = GStrings.format("Compilation: %s (%s)",
                 success ? GConsole.coloredText("SUCCESS", GConsole.COLOR_BRIGHT_GREEN) :
                         GConsole.coloredText("FAILURE", GConsole.COLOR_BRIGHT_RED),
-                GConsole.coloredText(GStrings.fromLong(lineCount), GConsole.COLOR_BRIGHT_BLACK)
+                lineCount < 0 ? "none" :
+                        GConsole.coloredText(GStrings.fromLong(lineCount), GConsole.COLOR_BRIGHT_BLACK)
         );
     }
 }

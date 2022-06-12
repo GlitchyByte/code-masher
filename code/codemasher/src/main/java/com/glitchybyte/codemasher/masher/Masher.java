@@ -82,7 +82,7 @@ public final class Masher implements Runnable {
             final List<JavaFile> javaFiles = gatherJavaFiles(watchedPath);
             final Coalescer coalescer = new Coalescer(javaFiles, mainClassName);
             final String newCoalescedClass = coalescer.coalesce();
-            final boolean compileSuccess = doesClassCompile(mainClassName, newCoalescedClass);
+            final boolean compileSuccess = (newCoalescedClass != null) && doesClassCompile(mainClassName, newCoalescedClass);
             if (compileSuccess) {
                 synchronized (coalescedClass) {
                     coalescedClass.value = newCoalescedClass;

@@ -74,7 +74,7 @@ public final class App implements Callable<Integer> {
         validate();
         Server.start(bindServerToLocalhostOnly, serverPort, mainJavaFilename, coalescedClass);
         final ExecutorService pool = Executors.newSingleThreadExecutor();
-        final MiniDisplay miniDisplay = new MiniDisplay(bindServerToLocalhostOnly);
+        final MiniDisplay miniDisplay = new MiniDisplay(bindServerToLocalhostOnly, serverPort);
         pool.execute(new Masher(watchedPath, mainJavaFilename, coalescedClass, miniDisplay));
         try {
             GSystem.waitForSigInt();
