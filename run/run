@@ -1,0 +1,22 @@
+#!/bin/sh
+# Copyright 2022 GlitchyByte
+# SPDX-License-Identifier: Apache-2.0
+
+# Run app!
+
+# Capture script directory.
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+
+# Capture project to run.
+project=$1
+
+# Capture arguments.
+shift
+args=$*
+
+# Build and get executable.
+gpx="${script_dir}/gpx.jar"
+executable="$(java -jar ${gpx} code ${project})"
+
+# Run app.
+"${executable}" $args
