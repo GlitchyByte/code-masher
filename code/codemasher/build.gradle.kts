@@ -15,24 +15,28 @@ java {
     }
 }
 
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter("5.8.2")
+        }
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+}
+
 dependencies {
-    // Main dependencies.
     implementation("info.picocli:picocli:4.6.3")
     implementation(project(":glib"))
     implementation("org.mdkt.compiler:InMemoryJavaCompiler:1.3.0")
     implementation(project(":gspring"))
-    // Test dependencies.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-}
-
-tasks.test {
-    useJUnitPlatform()
-    maxParallelForks = 4
 }
 
 // Setup build info.
 group = "com.glitchybyte.codemasher"
-version = "3.0.1"
+version = "3.0.2"
 
 application {
     // Set app entry point.

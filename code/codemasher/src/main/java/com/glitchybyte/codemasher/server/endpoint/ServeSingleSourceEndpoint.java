@@ -22,6 +22,7 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -38,7 +39,7 @@ public class ServeSingleSourceEndpoint {
     public CompletableFuture<ResponseEntity<StreamingResponseBody>> serveSingleSource(final HttpServletRequest request) {
         final String code;
         synchronized (Server.COALESCED_CLASS) {
-            code = Server.COALESCED_CLASS.value;
+            code = Objects.requireNonNullElse(Server.COALESCED_CLASS.value, "// No code :(\n");
         }
         synchronized (this) {
             if (sourceMediaType == null) {
