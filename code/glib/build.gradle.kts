@@ -15,21 +15,25 @@ java {
     }
 }
 
-tasks.named<Test>("test") {
-    useJUnitPlatform()
-    maxParallelForks = 4
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter("5.8.2")
+        }
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
 }
 
 dependencies {
-    // Main dependencies.
     api("com.google.code.gson:gson:2.9.0")
-    // Test dependencies.
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 // Setup build info.
 group = "com.glitchybyte.glib"
-version = "1.2.2"
+version = "1.2.3"
 
 tasks.named<Javadoc>("javadoc") {
     title = "${rootProject.name} v${version} API"

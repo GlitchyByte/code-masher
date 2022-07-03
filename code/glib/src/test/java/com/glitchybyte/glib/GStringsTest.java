@@ -20,9 +20,9 @@ public class GStringsTest {
 
     @Test
     void multipleLineIndent() {
-        final String input = "One line.\nTwo lines.";
+        final String input = "One line." + GStrings.NEW_LINE + "Two lines.";
         final String output = GStrings.indent(input);
-        assertEquals("  One line.\n  Two lines.", output);
+        assertEquals(GStrings.SPACE_TAB + "One line." + GStrings.NEW_LINE + GStrings.SPACE_TAB + "Two lines.", output);
     }
 
     @Test
