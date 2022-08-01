@@ -1,10 +1,9 @@
-// Copyright 2020-2022 GlitchyByte
+// Copyright 2022 GlitchyByte
 // SPDX-License-Identifier: Apache-2.0
 
 package com.glitchybyte.glib;
 
 import com.glitchybyte.glib.function.GSupplierWithException;
-import sun.misc.Signal;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -13,29 +12,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * General system helpers.
+ * Network utilities.
  */
-public final class GSystem {
-
-    /**
-     * Waits for {@code SIGINT} (Ctrl+C).
-     *
-     * <p>This is useful for apps that never end (like services),
-     * but you want to provide a nice break and exit anyway.
-     *
-     * @throws InterruptedException If thread is interrupted.
-     */
-    public static void waitForSigInt() throws InterruptedException {
-        final Object monitor = new Object();
-        Signal.handle(new Signal("INT"), signal -> {
-            synchronized (monitor) {
-                monitor.notifyAll();
-            }
-        });
-        synchronized (monitor) {
-            monitor.wait();
-        }
-    }
+public final class GNetwork {
 
     /**
      * Constant for localhost network address.
@@ -65,7 +44,7 @@ public final class GSystem {
         }
     }
 
-    private GSystem() {
+    private GNetwork() {
         // Hiding constructor.
     }
 }
