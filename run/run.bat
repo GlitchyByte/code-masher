@@ -20,4 +20,7 @@ set "gpx=%script_dir%gpx.jar"
 for /f %%i in ('java -jar %gpx% code %project%') do set executable=%%i
 
 :: Run app.
-%executable%%args%
+call %executable%%args%
+
+:: Exit.
+exit /b
