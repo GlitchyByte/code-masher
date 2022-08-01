@@ -5,7 +5,7 @@ package com.glitchybyte.codemasher;
 
 import com.glitchybyte.codemasher.masher.Masher;
 import com.glitchybyte.codemasher.server.Server;
-import com.glitchybyte.glib.GSystem;
+import com.glitchybyte.glib.GShutdownMonitor;
 import com.glitchybyte.glib.console.GConsole;
 import com.glitchybyte.glib.wrapped.GWrappedString;
 import picocli.CommandLine;
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <p>Coalesces Java files into a single file usable for CodinGame bots.
  */
-@CommandLine.Command(name = "codemasher", mixinStandardHelpOptions = true, version = "codemasher 3.0.0",
+@CommandLine.Command(name = "codemasher", mixinStandardHelpOptions = true, version = "codemasher 3.0.3",
         description = "Coalesces Java files into a single file usable for CodinGame bots.",
         footer = "Use @|bold Ctrl + C|@ to exit.")
 public final class App implements Callable<Integer> {
@@ -67,6 +67,7 @@ public final class App implements Callable<Integer> {
             description = "Port to serve the mashed code. Default is @|bold ${DEFAULT-VALUE}|@.")
     private int serverPort;
 
+    private final GShutdownMonitor shutdownMonitor = GShutdownMonitor.createShutdownMonitor();
     private final GWrappedString coalescedClass = new GWrappedString();
 
     @Override
@@ -77,7 +78,7 @@ public final class App implements Callable<Integer> {
         final MiniDisplay miniDisplay = new MiniDisplay(bindServerToLocalhostOnly, serverPort);
         pool.execute(new Masher(watchedPath, mainJavaFilename, coalescedClass, miniDisplay));
         try {
-            GSystem.waitForSigInt();
+            shutdownMonitor.hold();
             pool.shutdownNow();
             if (pool.awaitTermination(2, TimeUnit.SECONDS)) {
                 GConsole.println("%nGood luck!");

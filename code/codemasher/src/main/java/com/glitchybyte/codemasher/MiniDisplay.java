@@ -4,8 +4,8 @@
 package com.glitchybyte.codemasher;
 
 import com.glitchybyte.codemasher.masher.JavaFile;
+import com.glitchybyte.glib.GNetwork;
 import com.glitchybyte.glib.GStrings;
-import com.glitchybyte.glib.GSystem;
 import com.glitchybyte.glib.console.GConsole;
 
 import java.nio.file.Path;
@@ -67,9 +67,9 @@ public final class MiniDisplay {
 
     private String getNetworkString() {
         final String portString = Integer.toString(serverPort);
-        final Set<String> addresses = GSystem.getHostIPv4Addresses();
+        final Set<String> addresses = GNetwork.getHostIPv4Addresses();
         final Set<String> servingAddresses = isServingOnLocalhostOnly ?
-                Set.of(addresses.contains(GSystem.LOCALHOST) ? GSystem.LOCALHOST : "<NONE>") :
+                Set.of(addresses.contains(GNetwork.LOCALHOST) ? GNetwork.LOCALHOST : "<NONE>") :
                 addresses;
         final int addressesLength = 80 - 9 - 2 - portString.length();
         return GStrings.format("Network: %s :%s",
