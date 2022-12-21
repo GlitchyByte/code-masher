@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Copyright 2022 GlitchyByte
 # SPDX-License-Identifier: Apache-2.0
 
@@ -7,16 +7,20 @@
 # Capture script directory.
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 
+# Capture gradle root.
+gradle_root=$1
+
 # Capture project to run.
-project=$1
+project=$2
 
 # Capture arguments.
+shift
 shift
 args=$*
 
 # Build and get executable.
 gpx="${script_dir}/gpx.jar"
-executable="$(java -jar ${gpx} code ${project})"
+executable="$(java -jar ${gpx} ${gradle_root} ${project})"
 
 # Run app.
 "${executable}" $args

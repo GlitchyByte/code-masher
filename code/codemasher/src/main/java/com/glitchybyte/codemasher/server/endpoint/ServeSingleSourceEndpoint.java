@@ -6,6 +6,7 @@ package com.glitchybyte.codemasher.server.endpoint;
 import com.glitchybyte.codemasher.server.Server;
 import com.glitchybyte.codemasher.server.configuration.AsyncConfiguration;
 import com.glitchybyte.gspring.GSpringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
