@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <p>Coalesces Java files into a single file usable for CodinGame bots.
  */
-@CommandLine.Command(name = "codemasher", mixinStandardHelpOptions = true, version = "codemasher 3.0.3",
+@CommandLine.Command(name = "codemasher", mixinStandardHelpOptions = true, version = "codemasher 3.1.0",
         description = "Coalesces Java files into a single file usable for CodinGame bots.",
         footer = "Use @|bold Ctrl + C|@ to exit.")
 public final class App implements Callable<Integer> {
